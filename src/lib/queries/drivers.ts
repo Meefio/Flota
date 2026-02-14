@@ -8,6 +8,7 @@ export async function getDrivers() {
       id: users.id,
       email: users.email,
       name: users.name,
+      pesel: users.pesel,
       isActive: users.isActive,
       createdAt: users.createdAt,
     })
@@ -22,6 +23,7 @@ export async function getDriverById(id: number) {
       id: users.id,
       email: users.email,
       name: users.name,
+      pesel: users.pesel,
       isActive: users.isActive,
       createdAt: users.createdAt,
     })

@@ -13,6 +13,7 @@ interface DriverFormProps {
     id: number;
     email: string;
     name: string;
+    pesel: string | null;
   };
 }
 
@@ -56,6 +57,19 @@ export function DriverForm({ driver }: DriverFormProps) {
             />
             {errors?.name && (
               <p className="text-sm text-destructive">{errors.name[0]}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pesel">PESEL (opcjonalnie)</Label>
+            <Input
+              name="pesel"
+              defaultValue={driver?.pesel ?? ""}
+              placeholder="np. 90010112345"
+              maxLength={11}
+            />
+            {errors?.pesel && (
+              <p className="text-sm text-destructive">{errors.pesel[0]}</p>
             )}
           </div>
 

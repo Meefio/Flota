@@ -24,6 +24,9 @@ export default async function DriverDetailPage({
         <div>
           <h1 className="text-2xl font-bold">{driver.name}</h1>
           <p className="text-muted-foreground">{driver.email}</p>
+          {driver.pesel && (
+            <p className="text-muted-foreground text-sm">PESEL: {driver.pesel}</p>
+          )}
         </div>
         <Button asChild variant="outline">
           <Link href={`/admin/kierowcy/${driver.id}`}>

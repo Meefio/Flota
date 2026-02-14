@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { vehicles, vehicleDeadlines, vehicleAssignments, users } from "@/db/schema";
 import { eq, and, isNull, desc } from "drizzle-orm";
 
-export async function getVehicles(type?: "truck" | "trailer") {
+export async function getVehicles(type?: "truck" | "trailer" | "bus" | "other") {
   const conditions = [eq(vehicles.isActive, true)];
   if (type) conditions.push(eq(vehicles.type, type));
 

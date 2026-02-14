@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DEADLINE_TYPE_LABELS } from "@/lib/constants";
+import { DEADLINE_TYPE_LABELS, DEADLINE_TYPES_FOR_VEHICLE } from "@/lib/constants";
 import { recordOperation } from "@/lib/actions/deadlines";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
@@ -28,9 +28,10 @@ import type { DeadlineType } from "@/db/schema";
 interface OperationFormProps {
   vehicleId: number;
   defaultType?: DeadlineType;
+  vehicleType?: string;
 }
 
-export function OperationForm({ vehicleId, defaultType }: OperationFormProps) {
+export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }: OperationFormProps) {
   async function handleAction(_prev: unknown, formData: FormData) {
     formData.set("vehicleId", String(vehicleId));
     const result = await recordOperation(formData);
@@ -66,14 +67,9 @@ export function OperationForm({ vehicleId, defaultType }: OperationFormProps) {
                 <SelectValue placeholder="Wybierz typ" />
               </SelectTrigger>
               <SelectContent>
-                {(
-                  Object.entries(DEADLINE_TYPE_LABELS) as [
-                    DeadlineType,
-                    string,
-                  ][]
-                ).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
+                {(DEADLINE_TYPES_FOR_VEHICLE[vehicleType] ?? DEADLINE_TYPES_FOR_VEHICLE.truck).map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {DEADLINE_TYPE_LABELS[type]}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -1,5 +1,9 @@
+import { config } from "dotenv";
+
+config({ path: ".env.local" });
+
 import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+    import { drizzle } from "drizzle-orm/neon-http";
 import { hash } from "bcryptjs";
 import * as schema from "./schema";
 
@@ -69,7 +73,19 @@ async function seed() {
     })
     .returning();
 
-  console.log("Created vehicles:", truck1.registrationNumber, truck2.registrationNumber, trailer1.registrationNumber);
+  const [other1] = await db
+    .insert(schema.vehicles)
+    .values({
+      type: "other",
+      registrationNumber: "WGM 22222",
+      vin: "WF0XXXGCDX1234567",
+      brand: "Ford",
+      model: "Transit",
+      year: 2023,
+    })
+    .returning();
+
+  console.log("Created vehicles:", truck1.registrationNumber, truck2.registrationNumber, trailer1.registrationNumber, other1.registrationNumber);
 
   // Create deadlines for vehicles
   const today = new Date();
@@ -84,6 +100,10 @@ async function seed() {
     // Trailer 1
     { vehicleId: trailer1.id, type: "przeglad" as const, expiresAt: addDays(today, 15).toISOString().split("T")[0] },
     { vehicleId: trailer1.id, type: "winda_udt" as const, expiresAt: addDays(today, 60).toISOString().split("T")[0] },
+    // Other 1 - with UDT
+    { vehicleId: other1.id, type: "przeglad" as const, expiresAt: addDays(today, 90).toISOString().split("T")[0] },
+    { vehicleId: other1.id, type: "ubezpieczenie" as const, expiresAt: addDays(today, 150).toISOString().split("T")[0] },
+    { vehicleId: other1.id, type: "winda_udt" as const, expiresAt: addDays(today, 30).toISOString().split("T")[0] },
   ];
 
   await db.insert(schema.vehicleDeadlines).values(deadlines);

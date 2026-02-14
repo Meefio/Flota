@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Truck,
+  Wrench,
   Users,
   Calendar,
   FileText,
@@ -15,6 +16,7 @@ import { ADMIN_NAV_ITEMS, DRIVER_NAV_ITEMS } from "@/lib/constants";
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard,
   Truck,
+  Wrench,
   Users,
   Calendar,
   FileText,

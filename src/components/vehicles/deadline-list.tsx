@@ -1,6 +1,6 @@
 "use client";
 
-import { DEADLINE_TYPE_LABELS } from "@/lib/constants";
+import { DEADLINE_TYPE_LABELS, DEADLINE_TYPES_FOR_VEHICLE } from "@/lib/constants";
 import { DeadlineBadge } from "./deadline-badge";
 import type { DeadlineType } from "@/db/schema";
 
@@ -14,19 +14,15 @@ interface Deadline {
 interface DeadlineListProps {
   deadlines: Deadline[];
   vehicleId: number;
+  vehicleType?: string;
 }
 
-const ALL_DEADLINE_TYPES: DeadlineType[] = [
-  "przeglad",
-  "ubezpieczenie",
-  "tachograf",
-  "winda_udt",
-];
+export function DeadlineList({ deadlines, vehicleId, vehicleType = "truck" }: DeadlineListProps) {
+  const deadlineTypes = DEADLINE_TYPES_FOR_VEHICLE[vehicleType] ?? DEADLINE_TYPES_FOR_VEHICLE.truck;
 
-export function DeadlineList({ deadlines, vehicleId }: DeadlineListProps) {
   return (
     <div className="space-y-3">
-      {ALL_DEADLINE_TYPES.map((type) => {
+      {deadlineTypes.map((type) => {
         const deadline = deadlines.find((d) => d.type === type);
         return (
           <div

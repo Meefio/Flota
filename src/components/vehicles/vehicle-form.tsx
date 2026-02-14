@@ -21,6 +21,7 @@ interface VehicleFormProps {
     id: number;
     type: string;
     registrationNumber: string;
+    vin: string | null;
     brand: string;
     model: string;
     year: number | null;
@@ -71,6 +72,8 @@ export function VehicleForm({ vehicle }: VehicleFormProps) {
                 <SelectContent>
                   <SelectItem value="truck">Ciągnik</SelectItem>
                   <SelectItem value="trailer">Naczepa</SelectItem>
+                  <SelectItem value="bus">Bus</SelectItem>
+                  <SelectItem value="other">Pozostałe</SelectItem>
                 </SelectContent>
               </Select>
               {errors?.type && (
@@ -89,6 +92,19 @@ export function VehicleForm({ vehicle }: VehicleFormProps) {
                 <p className="text-sm text-destructive">
                   {errors.registrationNumber[0]}
                 </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="vin">Numer VIN</Label>
+              <Input
+                name="vin"
+                defaultValue={vehicle?.vin ?? ""}
+                placeholder="np. WF0XXXGCDX1234567"
+                maxLength={17}
+              />
+              {errors?.vin && (
+                <p className="text-sm text-destructive">{errors.vin[0]}</p>
               )}
             </div>
 

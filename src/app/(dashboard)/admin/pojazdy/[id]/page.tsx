@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/auth-utils";
 import { getVehicleWithDetails } from "@/lib/queries/vehicles";
 import { getDeadlineHistory } from "@/lib/queries/deadlines";
 import { getDrivers } from "@/lib/queries/drivers";
+import { getVehicleServices } from "@/lib/queries/services";
+import { getVehicleNotes } from "@/lib/queries/notes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +15,9 @@ import { DeleteVehicleButton } from "@/components/vehicles/delete-vehicle-button
 import { OperationForm } from "@/components/vehicles/operation-form";
 import { OperationHistory } from "@/components/vehicles/operation-history";
 import { AssignmentManager } from "@/components/vehicles/assignment-manager";
+import { ServiceForm } from "@/components/vehicles/service-form";
+import { ServiceList } from "@/components/vehicles/service-list";
+import { VehicleNotes } from "@/components/vehicles/vehicle-notes";
 import { Pencil } from "lucide-react";
 
 export default async function VehicleDetailPage({
@@ -24,10 +29,12 @@ export default async function VehicleDetailPage({
   const { id } = await params;
   const vehicleId = Number(id);
 
-  const [vehicle, history, drivers] = await Promise.all([
+  const [vehicle, history, drivers, services, notes] = await Promise.all([
     getVehicleWithDetails(vehicleId),
     getDeadlineHistory(vehicleId),
     getDrivers(),
+    getVehicleServices(vehicleId),
+    getVehicleNotes(vehicleId),
   ]);
 
   if (!vehicle) notFound();
@@ -42,8 +49,9 @@ export default async function VehicleDetailPage({
             {vehicle.year ? `(${vehicle.year})` : ""}
           </p>
         </div>
-        <div className="flex gap-2">
-          <OperationForm vehicleId={vehicleId} />
+        <div className="flex gap-2 flex-wrap">
+          <OperationForm vehicleId={vehicleId} vehicleType={vehicle.type} />
+          <ServiceForm vehicleId={vehicleId} />
           <Button asChild variant="outline">
             <Link href={`/admin/pojazdy/${vehicle.id}/edytuj`}>
               <Pencil className="h-4 w-4 mr-2" />
@@ -74,6 +82,12 @@ export default async function VehicleDetailPage({
               <span className="text-muted-foreground">Model</span>
               <span>{vehicle.model}</span>
             </div>
+            {vehicle.vin && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">VIN</span>
+                <span className="font-mono text-sm">{vehicle.vin}</span>
+              </div>
+            )}
             {vehicle.year && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Rok</span>
@@ -97,6 +111,7 @@ export default async function VehicleDetailPage({
             <DeadlineList
               deadlines={vehicle.deadlines}
               vehicleId={vehicle.id}
+              vehicleType={vehicle.type}
             />
           </CardContent>
         </Card>
@@ -113,6 +128,24 @@ export default async function VehicleDetailPage({
           </CardHeader>
           <CardContent>
             <OperationHistory operations={history} />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Serwisy i naprawy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ServiceList services={services} />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Adnotacje / czynności do wykonania</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VehicleNotes vehicleId={vehicleId} notes={notes} />
           </CardContent>
         </Card>
       </div>

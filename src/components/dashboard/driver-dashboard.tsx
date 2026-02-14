@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DeadlineBadge } from "@/components/vehicles/deadline-badge";
-import { DEADLINE_TYPE_LABELS, DRIVER_DOCUMENT_LABELS } from "@/lib/constants";
+import { DEADLINE_TYPE_LABELS, DRIVER_DOCUMENT_LABELS, DEADLINE_TYPES_FOR_VEHICLE } from "@/lib/constants";
 import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
 import type { DeadlineType, DriverDocumentType } from "@/db/schema";
 import { Eye } from "lucide-react";
@@ -62,7 +62,7 @@ export function DriverDashboard({ data }: DriverDashboardProps) {
                   </div>
                   {v.deadlines.length > 0 && (
                     <div className="space-y-1">
-                      {v.deadlines.map((d) => (
+                      {v.deadlines.filter((d) => (DEADLINE_TYPES_FOR_VEHICLE[v.type] ?? DEADLINE_TYPES_FOR_VEHICLE.truck).includes(d.type as DeadlineType)).map((d) => (
                         <div
                           key={d.id}
                           className="flex items-center justify-between text-sm"

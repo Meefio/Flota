@@ -2,12 +2,14 @@ import { notFound } from "next/navigation";
 import { requireDriverOwnership } from "@/lib/auth-utils";
 import { getVehicleWithDetails } from "@/lib/queries/vehicles";
 import { getDeadlineHistory } from "@/lib/queries/deadlines";
+import { getVehicleNotes } from "@/lib/queries/notes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
 import { DeadlineList } from "@/components/vehicles/deadline-list";
 import { OperationForm } from "@/components/vehicles/operation-form";
 import { OperationHistory } from "@/components/vehicles/operation-history";
+import { VehicleNotes } from "@/components/vehicles/vehicle-notes";
 
 export default async function DriverVehiclePage({
   params,
@@ -21,7 +23,10 @@ export default async function DriverVehiclePage({
   const vehicle = await getVehicleWithDetails(vehicleId);
   if (!vehicle) notFound();
 
-  const history = await getDeadlineHistory(vehicleId);
+  const [history, notes] = await Promise.all([
+    getDeadlineHistory(vehicleId),
+    getVehicleNotes(vehicleId),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -30,19 +35,53 @@ export default async function DriverVehiclePage({
           <h1 className="text-2xl font-bold">{vehicle.registrationNumber}</h1>
           <p className="text-muted-foreground">
             {vehicle.brand} {vehicle.model}{" "}
-            <Badge variant="outline">{VEHICLE_TYPE_LABELS[vehicle.type]}</Badge>
+            {vehicle.year ? `(${vehicle.year})` : ""}
           </p>
         </div>
-        <OperationForm vehicleId={vehicleId} />
+        <OperationForm vehicleId={vehicleId} vehicleType={vehicle.type} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
+            <CardTitle className="text-lg">Informacje</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Typ</span>
+              <Badge variant="outline">
+                {VEHICLE_TYPE_LABELS[vehicle.type]}
+              </Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Marka</span>
+              <span>{vehicle.brand}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Model</span>
+              <span>{vehicle.model}</span>
+            </div>
+            {vehicle.vin && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">VIN</span>
+                <span className="font-mono text-sm">{vehicle.vin}</span>
+              </div>
+            )}
+            {vehicle.year && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Rok</span>
+                <span>{vehicle.year}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle className="text-lg">Terminy</CardTitle>
           </CardHeader>
           <CardContent>
-            <DeadlineList deadlines={vehicle.deadlines} vehicleId={vehicleId} />
+            <DeadlineList deadlines={vehicle.deadlines} vehicleId={vehicleId} vehicleType={vehicle.type} />
           </CardContent>
         </Card>
 
@@ -52,6 +91,15 @@ export default async function DriverVehiclePage({
           </CardHeader>
           <CardContent>
             <OperationHistory operations={history} />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Adnotacje / czynności do wykonania</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VehicleNotes vehicleId={vehicleId} notes={notes} />
           </CardContent>
         </Card>
       </div>

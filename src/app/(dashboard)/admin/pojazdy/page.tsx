@@ -9,9 +9,11 @@ import { Plus } from "lucide-react";
 export default async function VehiclesPage() {
   await requireAdmin();
 
-  const [trucks, trailers] = await Promise.all([
+  const [trucks, trailers, buses, others] = await Promise.all([
     getVehicles("truck"),
     getVehicles("trailer"),
+    getVehicles("bus"),
+    getVehicles("other"),
   ]);
 
   return (
@@ -30,12 +32,20 @@ export default async function VehiclesPage() {
         <TabsList>
           <TabsTrigger value="trucks">Ciągniki ({trucks.length})</TabsTrigger>
           <TabsTrigger value="trailers">Naczepy ({trailers.length})</TabsTrigger>
+          <TabsTrigger value="buses">Busy ({buses.length})</TabsTrigger>
+          <TabsTrigger value="others">Pozostałe ({others.length})</TabsTrigger>
         </TabsList>
         <TabsContent value="trucks">
           <VehicleList vehicles={trucks} />
         </TabsContent>
         <TabsContent value="trailers">
           <VehicleList vehicles={trailers} />
+        </TabsContent>
+        <TabsContent value="buses">
+          <VehicleList vehicles={buses} />
+        </TabsContent>
+        <TabsContent value="others">
+          <VehicleList vehicles={others} />
         </TabsContent>
       </Tabs>
     </div>

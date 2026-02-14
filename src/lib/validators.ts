@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const vehicleSchema = z.object({
-  type: z.enum(["truck", "trailer"], { message: "Wybierz typ pojazdu" }),
+  type: z.enum(["truck", "trailer", "bus", "other"], { message: "Wybierz typ pojazdu" }),
+  vin: z.string().max(17).nullable().optional(),
   registrationNumber: z
     .string()
     .min(1, "Numer rejestracyjny jest wymagany")
@@ -27,6 +28,7 @@ export type DeadlineOperationFormValues = z.infer<typeof deadlineOperationSchema
 export const driverSchema = z.object({
   email: z.string().email("Nieprawidłowy email"),
   name: z.string().min(1, "Imię i nazwisko jest wymagane").max(255),
+  pesel: z.string().length(11, "PESEL musi mieć 11 cyfr").regex(/^\d{11}$/, "PESEL musi składać się z 11 cyfr").nullable().optional(),
   password: z.string().min(6, "Hasło musi mieć min. 6 znaków").optional(),
 });
 
@@ -45,3 +47,18 @@ export const assignmentSchema = z.object({
   assignedFrom: z.string().min(1, "Data rozpoczęcia jest wymagana"),
   notes: z.string().max(500).optional(),
 });
+
+export const vehicleServiceSchema = z.object({
+  vehicleId: z.coerce.number().positive(),
+  type: z.enum(["wymiana_oleju", "naprawa", "opony", "hamulce", "elektryka", "inne"], {
+    message: "Wybierz typ serwisu",
+  }),
+  description: z.string().min(1, "Opis jest wymagany").max(1000),
+  performedAt: z.string().min(1, "Data wykonania jest wymagana"),
+  cost: z.coerce.number().min(0, "Koszt nie może być ujemny").nullable().optional(),
+  mileage: z.coerce.number().min(0).nullable().optional(),
+  workshop: z.string().max(255).nullable().optional(),
+  notes: z.string().max(1000).nullable().optional(),
+});
+
+export type VehicleServiceFormValues = z.infer<typeof vehicleServiceSchema>;

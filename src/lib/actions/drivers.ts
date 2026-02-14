@@ -13,7 +13,10 @@ export async function createDriver(formData: FormData) {
   const session = await requireAdmin();
 
   const raw = Object.fromEntries(formData);
-  const parsed = driverSchema.safeParse(raw);
+  const parsed = driverSchema.safeParse({
+    ...raw,
+    pesel: raw.pesel || null,
+  });
 
   if (!parsed.success) {
     return { error: parsed.error.flatten().fieldErrors };
@@ -31,6 +34,7 @@ export async function createDriver(formData: FormData) {
       email: parsed.data.email,
       passwordHash,
       name: parsed.data.name,
+      pesel: parsed.data.pesel ?? null,
       role: "driver",
     })
     .returning();
@@ -51,7 +55,10 @@ export async function updateDriver(id: number, formData: FormData) {
   const session = await requireAdmin();
 
   const raw = Object.fromEntries(formData);
-  const parsed = driverSchema.safeParse(raw);
+  const parsed = driverSchema.safeParse({
+    ...raw,
+    pesel: raw.pesel || null,
+  });
 
   if (!parsed.success) {
     return { error: parsed.error.flatten().fieldErrors };
@@ -60,6 +67,7 @@ export async function updateDriver(id: number, formData: FormData) {
   const updateData: Record<string, unknown> = {
     email: parsed.data.email,
     name: parsed.data.name,
+    pesel: parsed.data.pesel ?? null,
     updatedAt: new Date(),
   };
 

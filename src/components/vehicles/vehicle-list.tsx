@@ -18,6 +18,7 @@ interface Vehicle {
   id: number;
   type: string;
   registrationNumber: string;
+  vin: string | null;
   brand: string;
   model: string;
   year: number | null;
@@ -38,6 +39,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
         <TableHeader>
           <TableRow>
             <TableHead>Nr rejestracyjny</TableHead>
+            <TableHead className="hidden md:table-cell">VIN</TableHead>
             <TableHead>Typ</TableHead>
             <TableHead>Marka / Model</TableHead>
             <TableHead className="hidden sm:table-cell">Rok</TableHead>
@@ -49,6 +51,9 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
             <TableRow key={vehicle.id}>
               <TableCell className="font-medium">
                 {vehicle.registrationNumber}
+              </TableCell>
+              <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground">
+                {vehicle.vin ?? "—"}
               </TableCell>
               <TableCell>
                 <Badge variant="outline">

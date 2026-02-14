@@ -15,6 +15,7 @@ export async function createVehicle(formData: FormData) {
   const parsed = vehicleSchema.safeParse({
     ...raw,
     year: raw.year ? Number(raw.year) : null,
+    vin: raw.vin || null,
   });
 
   if (!parsed.success) {
@@ -26,6 +27,7 @@ export async function createVehicle(formData: FormData) {
     .values({
       type: parsed.data.type,
       registrationNumber: parsed.data.registrationNumber,
+      vin: parsed.data.vin ?? null,
       brand: parsed.data.brand,
       model: parsed.data.model,
       year: parsed.data.year ?? null,
@@ -52,6 +54,7 @@ export async function updateVehicle(id: number, formData: FormData) {
   const parsed = vehicleSchema.safeParse({
     ...raw,
     year: raw.year ? Number(raw.year) : null,
+    vin: raw.vin || null,
   });
 
   if (!parsed.success) {
@@ -63,6 +66,7 @@ export async function updateVehicle(id: number, formData: FormData) {
     .set({
       type: parsed.data.type,
       registrationNumber: parsed.data.registrationNumber,
+      vin: parsed.data.vin ?? null,
       brand: parsed.data.brand,
       model: parsed.data.model,
       year: parsed.data.year ?? null,

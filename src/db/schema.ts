@@ -9,6 +9,7 @@ import {
   jsonb,
   unique,
   date,
+  numeric,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -19,6 +20,7 @@ export const users = pgTable("users", {
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   role: varchar("role", { length: 20 }).notNull().$type<"admin" | "driver">(),
+  pesel: varchar("pesel", { length: 11 }),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -35,8 +37,9 @@ export const usersRelations = relations(users, ({ many }) => ({
 // ==================== VEHICLES ====================
 export const vehicles = pgTable("vehicles", {
   id: serial("id").primaryKey(),
-  type: varchar("type", { length: 20 }).notNull().$type<"truck" | "trailer">(),
+  type: varchar("type", { length: 20 }).notNull().$type<"truck" | "trailer" | "bus" | "other">(),
   registrationNumber: varchar("registration_number", { length: 20 }).notNull().unique(),
+  vin: varchar("vin", { length: 17 }),
   brand: varchar("brand", { length: 100 }).notNull(),
   model: varchar("model", { length: 100 }).notNull(),
   year: integer("year"),
@@ -50,6 +53,8 @@ export const vehiclesRelations = relations(vehicles, ({ many }) => ({
   deadlines: many(vehicleDeadlines),
   deadlineOperations: many(deadlineOperations),
   assignments: many(vehicleAssignments),
+  services: many(vehicleServices),
+  notes: many(vehicleNotes),
 }));
 
 // ==================== VEHICLE DEADLINES ====================
@@ -193,6 +198,64 @@ export const fileAttachmentsRelations = relations(fileAttachments, ({ one }) => 
   }),
   uploadedBy: one(users, {
     fields: [fileAttachments.uploadedById],
+    references: [users.id],
+  }),
+}));
+
+// ==================== VEHICLE SERVICES ====================
+export type ServiceType = "wymiana_oleju" | "naprawa" | "opony" | "hamulce" | "elektryka" | "inne";
+
+export const vehicleServices = pgTable("vehicle_services", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id")
+    .notNull()
+    .references(() => vehicles.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 30 }).notNull().$type<ServiceType>(),
+  description: text("description").notNull(),
+  performedAt: date("performed_at").notNull(),
+  cost: numeric("cost", { precision: 10, scale: 2 }),
+  mileage: integer("mileage"),
+  workshop: varchar("workshop", { length: 255 }),
+  notes: text("notes"),
+  createdById: integer("created_by_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const vehicleServicesRelations = relations(vehicleServices, ({ one }) => ({
+  vehicle: one(vehicles, {
+    fields: [vehicleServices.vehicleId],
+    references: [vehicles.id],
+  }),
+  createdBy: one(users, {
+    fields: [vehicleServices.createdById],
+    references: [users.id],
+  }),
+}));
+
+// ==================== VEHICLE NOTES (driver checklist) ====================
+export const vehicleNotes = pgTable("vehicle_notes", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id")
+    .notNull()
+    .references(() => vehicles.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  isDone: boolean("is_done").notNull().default(false),
+  createdById: integer("created_by_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const vehicleNotesRelations = relations(vehicleNotes, ({ one }) => ({
+  vehicle: one(vehicles, {
+    fields: [vehicleNotes.vehicleId],
+    references: [vehicles.id],
+  }),
+  createdBy: one(users, {
+    fields: [vehicleNotes.createdById],
     references: [users.id],
   }),
 }));

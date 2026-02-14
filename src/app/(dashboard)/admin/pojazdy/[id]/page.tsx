@@ -1,0 +1,121 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/auth-utils";
+import { getVehicleWithDetails } from "@/lib/queries/vehicles";
+import { getDeadlineHistory } from "@/lib/queries/deadlines";
+import { getDrivers } from "@/lib/queries/drivers";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
+import { DeadlineList } from "@/components/vehicles/deadline-list";
+import { DeleteVehicleButton } from "@/components/vehicles/delete-vehicle-button";
+import { OperationForm } from "@/components/vehicles/operation-form";
+import { OperationHistory } from "@/components/vehicles/operation-history";
+import { AssignmentManager } from "@/components/vehicles/assignment-manager";
+import { Pencil } from "lucide-react";
+
+export default async function VehicleDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  await requireAdmin();
+  const { id } = await params;
+  const vehicleId = Number(id);
+
+  const [vehicle, history, drivers] = await Promise.all([
+    getVehicleWithDetails(vehicleId),
+    getDeadlineHistory(vehicleId),
+    getDrivers(),
+  ]);
+
+  if (!vehicle) notFound();
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <h1 className="text-2xl font-bold">{vehicle.registrationNumber}</h1>
+          <p className="text-muted-foreground">
+            {vehicle.brand} {vehicle.model}{" "}
+            {vehicle.year ? `(${vehicle.year})` : ""}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <OperationForm vehicleId={vehicleId} />
+          <Button asChild variant="outline">
+            <Link href={`/admin/pojazdy/${vehicle.id}/edytuj`}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Edytuj
+            </Link>
+          </Button>
+          <DeleteVehicleButton vehicleId={vehicle.id} />
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Informacje</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Typ</span>
+              <Badge variant="outline">
+                {VEHICLE_TYPE_LABELS[vehicle.type]}
+              </Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Marka</span>
+              <span>{vehicle.brand}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Model</span>
+              <span>{vehicle.model}</span>
+            </div>
+            {vehicle.year && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Rok</span>
+                <span>{vehicle.year}</span>
+              </div>
+            )}
+            {vehicle.notes && (
+              <div>
+                <span className="text-muted-foreground text-sm">Notatki</span>
+                <p className="text-sm mt-1">{vehicle.notes}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Terminy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DeadlineList
+              deadlines={vehicle.deadlines}
+              vehicleId={vehicle.id}
+            />
+          </CardContent>
+        </Card>
+
+        <AssignmentManager
+          vehicleId={vehicleId}
+          currentAssignment={vehicle.currentAssignment}
+          drivers={drivers}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Historia operacji</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OperationHistory operations={history} />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

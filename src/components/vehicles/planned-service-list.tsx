@@ -75,7 +75,7 @@ export function PlannedServiceList({
   );
 }
 
-function PlannedServiceForm({ vehicleId }: { vehicleId: number }) {
+export function PlannedServiceForm({ vehicleId }: { vehicleId: number }) {
   async function handleAction(_prev: unknown, formData: FormData) {
     formData.set("vehicleId", String(vehicleId));
     const result = await createPlannedService(formData);

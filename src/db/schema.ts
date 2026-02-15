@@ -273,6 +273,8 @@ export const vehicleNotes = pgTable("vehicle_notes", {
     .references(() => vehicles.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   isDone: boolean("is_done").notNull().default(false),
+  assignedToId: integer("assigned_to_id").references(() => users.id),
+  isAdminOnly: boolean("is_admin_only").notNull().default(true),
   createdById: integer("created_by_id")
     .notNull()
     .references(() => users.id),
@@ -287,6 +289,10 @@ export const vehicleNotesRelations = relations(vehicleNotes, ({ one }) => ({
   }),
   createdBy: one(users, {
     fields: [vehicleNotes.createdById],
+    references: [users.id],
+  }),
+  assignedTo: one(users, {
+    fields: [vehicleNotes.assignedToId],
     references: [users.id],
   }),
 }));

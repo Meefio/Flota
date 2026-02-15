@@ -18,7 +18,7 @@ import { OperationHistory } from "@/components/vehicles/operation-history";
 import { AssignmentManager } from "@/components/vehicles/assignment-manager";
 import { ServiceForm } from "@/components/vehicles/service-form";
 import { ServiceList } from "@/components/vehicles/service-list";
-import { PlannedServiceList } from "@/components/vehicles/planned-service-list";
+import { PlannedServiceList, PlannedServiceForm } from "@/components/vehicles/planned-service-list";
 import { VehicleNotes } from "@/components/vehicles/vehicle-notes";
 import { Pencil } from "lucide-react";
 
@@ -56,7 +56,8 @@ export default async function VehicleDetailPage({
         <div className="flex gap-2 flex-wrap">
           <OperationForm vehicleId={vehicleId} vehicleType={vehicle.type} />
           <ServiceForm vehicleId={vehicleId} />
-          <Button asChild variant="outline">
+          <PlannedServiceForm vehicleId={vehicleId} />
+          <Button asChild variant="outline" size="sm">
             <Link href={`/admin/pojazdy/${vehicle.id}/edytuj`}>
               <Pencil className="h-4 w-4 mr-2" />
               Edytuj
@@ -161,7 +162,11 @@ export default async function VehicleDetailPage({
             <CardTitle className="text-lg">Adnotacje / czynności do wykonania</CardTitle>
           </CardHeader>
           <CardContent>
-            <VehicleNotes vehicleId={vehicleId} notes={notes} />
+            <VehicleNotes
+              vehicleId={vehicleId}
+              notes={notes}
+              drivers={drivers.map((d) => ({ id: d.id, name: d.name }))}
+            />
           </CardContent>
         </Card>
       </div>

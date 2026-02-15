@@ -51,6 +51,7 @@ export const ADMIN_NAV_ITEMS = [
 
 export const DRIVER_NAV_ITEMS = [
   { label: "Pojazdy", href: "/kierowca/pojazdy", icon: "Truck" },
+  { label: "Zadania", href: "/kierowca/zadania", icon: "ClipboardList" },
   { label: "Dokumenty", href: "/kierowca/dokumenty", icon: "FileText" },
   { label: "Profil", href: "/kierowca/profil", icon: "User" },
 ] as const;
@@ -84,6 +85,7 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "note.create": "Dodanie notatki",
   "note.toggle": "Zmiana statusu notatki",
   "note.delete": "Usunięcie notatki",
+  "note.assign": "Przypisanie zadania",
   "user.create": "Dodanie użytkownika",
   "user.update": "Edycja użytkownika",
   "user.deactivate": "Dezaktywacja użytkownika",

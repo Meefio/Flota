@@ -17,6 +17,7 @@ import {
   Calendar,
   FileText,
   User,
+  ClipboardList,
 } from "lucide-react";
 import { ADMIN_NAV_ITEMS, DRIVER_NAV_ITEMS } from "@/lib/constants";
 
@@ -29,6 +30,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Calendar,
   FileText,
   User,
+  ClipboardList,
 };
 
 export function MobileNav({ role }: { role: "admin" | "driver" }) {

@@ -5,6 +5,7 @@ import { Topbar } from "@/components/layout/topbar";
 import { Toaster } from "@/components/ui/sonner";
 import { getExpiringDeadlines } from "@/lib/queries/deadlines";
 import { getRecentAuditLogsForAdmin } from "@/lib/queries/audit";
+import { getDriverAssignedTasks } from "@/lib/queries/notes";
 
 export default async function DashboardLayout({
   children,
@@ -17,6 +18,8 @@ export default async function DashboardLayout({
   let urgentCount = 0;
   let recentAuditLogs: Awaited<ReturnType<typeof getRecentAuditLogsForAdmin>> =
     [];
+  let driverTasks: Awaited<ReturnType<typeof getDriverAssignedTasks>> = [];
+
   if (session.user.role === "admin") {
     const [urgent, audit] = await Promise.all([
       getExpiringDeadlines(7),
@@ -24,6 +27,8 @@ export default async function DashboardLayout({
     ]);
     urgentCount = urgent.length;
     recentAuditLogs = audit;
+  } else if (session.user.role === "driver") {
+    driverTasks = await getDriverAssignedTasks(Number(session.user.id));
   }
 
   return (
@@ -35,6 +40,7 @@ export default async function DashboardLayout({
           role={session.user.role}
           urgentCount={urgentCount}
           recentAuditLogs={recentAuditLogs}
+          driverTasks={driverTasks}
         />
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>

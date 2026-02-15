@@ -50,7 +50,12 @@ export async function updatePlannedService(id: number, formData: FormData) {
   const session = await requireAdmin();
 
   const [existing] = await db
-    .select({ vehicleId: plannedVehicleServices.vehicleId })
+    .select({
+      vehicleId: plannedVehicleServices.vehicleId,
+      type: plannedVehicleServices.type,
+      plannedDate: plannedVehicleServices.plannedDate,
+      notes: plannedVehicleServices.notes,
+    })
     .from(plannedVehicleServices)
     .where(eq(plannedVehicleServices.id, id))
     .limit(1);
@@ -77,12 +82,18 @@ export async function updatePlannedService(id: number, formData: FormData) {
     })
     .where(eq(plannedVehicleServices.id, id));
 
+  const previous = {
+    type: existing.type,
+    plannedDate: existing.plannedDate,
+    notes: existing.notes,
+  };
+
   await logAudit({
     userId: Number(session.user.id),
     action: "planned_service.update",
     entityType: "planned_vehicle_service",
     entityId: id,
-    details: parsed.data,
+    details: { previous, current: parsed.data },
   });
 
   revalidatePath("/admin/kalendarz");

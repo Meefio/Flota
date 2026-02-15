@@ -4,6 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useRouter } from "next/navigation";
+import "./calendar-styles.css";
 
 interface CalendarEvent {
   id: string;
@@ -24,7 +25,7 @@ export function DeadlineCalendar({ events }: { events: CalendarEvent[] }) {
   const router = useRouter();
 
   return (
-    <div className="bg-card rounded-lg border p-4">
+    <div className="bg-card rounded-lg border p-4 fc-modern">
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -33,12 +34,11 @@ export function DeadlineCalendar({ events }: { events: CalendarEvent[] }) {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "dayGridMonth,dayGridWeek",
+          right: "",
         }}
         buttonText={{
           today: "Dziś",
           month: "Miesiąc",
-          week: "Tydzień",
         }}
         eventClick={(info) => {
           const vehicleId = info.event.extendedProps.vehicleId;

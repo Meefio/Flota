@@ -59,7 +59,7 @@ export function NotificationBell({
           <>
             <div className="px-2 py-2">
               <Link
-                href="/admin"
+                href="/admin/kalendarz"
                 className="text-sm font-medium text-destructive hover:underline"
               >
                 Pilne terminy: {urgentCount} bliskich upływu

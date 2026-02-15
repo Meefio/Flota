@@ -1,0 +1,109 @@
+/* Modern calendar button styles matching shadcn/ui */
+.fc-modern .fc .fc-button {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  text-transform: none;
+  box-shadow: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.fc-modern .fc .fc-button:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.fc-modern .fc .fc-button:focus {
+  box-shadow: 0 0 0 2px var(--ring);
+  outline: none;
+}
+
+.fc-modern .fc .fc-button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.fc-modern .fc .fc-button-active,
+.fc-modern .fc .fc-button-active:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.fc-modern .fc .fc-button-group {
+  gap: 0.25rem;
+}
+
+.fc-modern .fc .fc-button-group > .fc-button {
+  border-radius: var(--radius);
+}
+
+/* Today button */
+.fc-modern .fc .fc-today-button {
+  border-radius: var(--radius);
+}
+
+/* Toolbar title */
+.fc-modern .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Navigation buttons */
+.fc-modern .fc .fc-prev-button,
+.fc-modern .fc .fc-next-button {
+  padding: 0.375rem 0.5rem;
+}
+
+/* Day header cells */
+.fc-modern .fc .fc-col-header-cell {
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+  padding: 0.5rem 0;
+}
+
+/* Today highlight */
+.fc-modern .fc .fc-day-today {
+  background-color: var(--accent) !important;
+}
+
+/* Event styles */
+.fc-modern .fc .fc-event {
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.75rem;
+  padding: 1px 4px;
+  border: none;
+}
+
+/* Grid lines */
+.fc-modern .fc td,
+.fc-modern .fc th {
+  border-color: var(--border);
+}
+
+.fc-modern .fc .fc-scrollgrid {
+  border-color: var(--border);
+}
+
+/* Toolbar spacing */
+.fc-modern .fc .fc-toolbar {
+  margin-bottom: 1rem !important;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .fc-modern .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .fc-modern .fc .fc-toolbar-title {
+    font-size: 1.125rem;
+  }
+}

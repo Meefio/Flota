@@ -56,7 +56,16 @@ export async function updateService(id: number, formData: FormData) {
   const session = await requireAdmin();
 
   const [existing] = await db
-    .select({ vehicleId: vehicleServices.vehicleId })
+    .select({
+      vehicleId: vehicleServices.vehicleId,
+      type: vehicleServices.type,
+      description: vehicleServices.description,
+      performedAt: vehicleServices.performedAt,
+      cost: vehicleServices.cost,
+      mileage: vehicleServices.mileage,
+      workshop: vehicleServices.workshop,
+      notes: vehicleServices.notes,
+    })
     .from(vehicleServices)
     .where(eq(vehicleServices.id, id))
     .limit(1);
@@ -90,12 +99,22 @@ export async function updateService(id: number, formData: FormData) {
     })
     .where(eq(vehicleServices.id, id));
 
+  const previous = {
+    type: existing.type,
+    description: existing.description,
+    performedAt: existing.performedAt,
+    cost: existing.cost ? Number(existing.cost) : null,
+    mileage: existing.mileage,
+    workshop: existing.workshop,
+    notes: existing.notes,
+  };
+
   await logAudit({
     userId: Number(session.user.id),
     action: "service.update",
     entityType: "vehicle_service",
     entityId: id,
-    details: parsed.data,
+    details: { previous, current: parsed.data },
   });
 
   revalidatePath("/admin/serwisy");

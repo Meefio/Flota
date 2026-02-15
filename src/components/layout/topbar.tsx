@@ -14,13 +14,22 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import { NotificationBell } from "./notification-bell";
+import { DriverNotificationBell } from "./notification-bell-driver";
 import type { RecentAuditEntry } from "@/lib/queries/audit";
+
+interface DriverTask {
+  id: number;
+  content: string;
+  vehicleId: number;
+  registrationNumber: string;
+}
 
 interface TopbarProps {
   userName: string;
   role: "admin" | "driver";
   urgentCount?: number;
   recentAuditLogs?: RecentAuditEntry[];
+  driverTasks?: DriverTask[];
 }
 
 export function Topbar({
@@ -28,6 +37,7 @@ export function Topbar({
   role,
   urgentCount = 0,
   recentAuditLogs = [],
+  driverTasks = [],
 }: TopbarProps) {
   const initials = userName
     .split(" ")
@@ -37,17 +47,19 @@ export function Topbar({
     .slice(0, 2);
 
   return (
-    <header className="h-14 border-b bg-card flex items-center justify-between px-4">
+    <header className="h-14 border-b bg-card flex items-center justify-between px-4 sticky top-0 z-50">
       <div className="flex items-center gap-2">
         <MobileNav role={role} />
-        <Image
-          src="/logo.png"
-          alt="W.G. Invest Group Sp. z o.o."
-          width={240}
-          height={64}
-          className="h-14 w-auto object-contain md:hidden"
-          unoptimized
-        />
+        <Link href={role === "admin" ? "/admin" : "/kierowca"}>
+          <Image
+            src="/logo.png"
+            alt="W.G. Invest Group Sp. z o.o."
+            width={240}
+            height={64}
+            className="h-14 w-auto object-contain md:hidden"
+            unoptimized
+          />
+        </Link>
       </div>
       <div className="flex items-center gap-3">
         {role === "admin" && (
@@ -55,6 +67,9 @@ export function Topbar({
             urgentCount={urgentCount}
             recentAuditLogs={recentAuditLogs}
           />
+        )}
+        {role === "driver" && (
+          <DriverNotificationBell tasks={driverTasks} />
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

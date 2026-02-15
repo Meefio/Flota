@@ -37,9 +37,15 @@ export function formatAuditDetails(
 
   const d = details as Record<string, unknown>;
 
-  // Diff dla vehicle.update / driver.update (gdy w details jest previous i current)
+  // Diff for update actions (when details has previous and current)
+  const DIFF_ACTIONS = [
+    "vehicle.update",
+    "driver.update",
+    "service.update",
+    "planned_service.update",
+  ];
   if (
-    (action === "vehicle.update" || action === "driver.update") &&
+    DIFF_ACTIONS.includes(action) &&
     d.previous &&
     d.current &&
     typeof d.previous === "object" &&
@@ -55,7 +61,7 @@ export function formatAuditDetails(
 
   // Update bez previous (np. stary wpis lub brak rekordu) — formatuj current jako snapshot
   if (
-    (action === "vehicle.update" || action === "driver.update") &&
+    DIFF_ACTIONS.includes(action) &&
     d.current &&
     typeof d.current === "object"
   ) {
@@ -167,16 +173,41 @@ const DRIVER_FIELD_LABELS: Record<string, string> = {
   email: "Email",
 };
 
+const SERVICE_FIELD_LABELS: Record<string, string> = {
+  type: "Typ",
+  description: "Opis",
+  performedAt: "Data wykonania",
+  cost: "Koszt",
+  mileage: "Przebieg",
+  workshop: "Warsztat",
+  notes: "Notatki",
+};
+
+const PLANNED_SERVICE_FIELD_LABELS: Record<string, string> = {
+  type: "Typ",
+  plannedDate: "Planowana data",
+  notes: "Notatki",
+};
+
 function formatDetailsDiff(
   action: string,
   entityType: string,
   previous: Record<string, unknown>,
   current: Record<string, unknown>
 ): string {
-  const fieldLabels =
-    entityType === "vehicle" ? VEHICLE_FIELD_LABELS : DRIVER_FIELD_LABELS;
-  const typeLabels =
-    entityType === "vehicle" ? VEHICLE_TYPE_LABELS : undefined;
+  const fieldLabelsMap: Record<string, Record<string, string>> = {
+    vehicle: VEHICLE_FIELD_LABELS,
+    driver: DRIVER_FIELD_LABELS,
+    vehicle_service: SERVICE_FIELD_LABELS,
+    planned_vehicle_service: PLANNED_SERVICE_FIELD_LABELS,
+  };
+  const fieldLabels = fieldLabelsMap[entityType] ?? {};
+  const typeLabels: Record<string, string> | undefined =
+    entityType === "vehicle"
+      ? VEHICLE_TYPE_LABELS
+      : entityType === "vehicle_service" || entityType === "planned_vehicle_service"
+        ? (SERVICE_TYPE_LABELS as Record<string, string>)
+        : undefined;
 
   const parts: string[] = [];
   const allKeys = new Set([

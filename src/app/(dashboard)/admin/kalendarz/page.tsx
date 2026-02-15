@@ -12,7 +12,7 @@ export default async function CalendarPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Kalendarz terminów</h1>
-      <div className="flex gap-4 text-sm">
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs sm:text-sm">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-green-500" />
           <span>OK (&gt;30 dni)</span>

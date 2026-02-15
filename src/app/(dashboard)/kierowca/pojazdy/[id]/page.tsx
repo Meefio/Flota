@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { requireDriverOwnership } from "@/lib/auth-utils";
 import { getVehicleWithDetails } from "@/lib/queries/vehicles";
 import { getDeadlineHistory } from "@/lib/queries/deadlines";
-import { getVehicleNotes } from "@/lib/queries/notes";
+import { getVehicleNotesForDriver } from "@/lib/queries/notes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
@@ -18,14 +18,14 @@ export default async function DriverVehiclePage({
 }) {
   const { id } = await params;
   const vehicleId = Number(id);
-  await requireDriverOwnership(vehicleId);
+  const session = await requireDriverOwnership(vehicleId);
 
   const vehicle = await getVehicleWithDetails(vehicleId);
   if (!vehicle) notFound();
 
   const [history, notes] = await Promise.all([
     getDeadlineHistory(vehicleId),
-    getVehicleNotes(vehicleId),
+    getVehicleNotesForDriver(vehicleId, Number(session.user.id)),
   ]);
 
   return (

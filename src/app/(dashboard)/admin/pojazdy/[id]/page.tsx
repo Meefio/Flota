@@ -118,7 +118,7 @@ export default async function VehicleDetailPage({
 
         <AssignmentManager
           vehicleId={vehicleId}
-          currentAssignment={vehicle.currentAssignment}
+          currentAssignments={vehicle.currentAssignments}
           drivers={drivers}
         />
 

@@ -7,17 +7,14 @@ import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth-utils";
-import { driverSchema } from "@/lib/validators";
+import { userSchema } from "@/lib/validators";
 import { logAudit } from "@/lib/audit";
 
-export async function createDriver(formData: FormData) {
+export async function createUser(formData: FormData) {
   const session = await requireAdmin();
 
   const raw = Object.fromEntries(formData);
-  const parsed = driverSchema.safeParse({
-    ...raw,
-    pesel: raw.pesel || null,
-  });
+  const parsed = userSchema.safeParse(raw);
 
   if (!parsed.success) {
     return { error: parsed.error.flatten().fieldErrors };
@@ -26,86 +23,76 @@ export async function createDriver(formData: FormData) {
   const randomToken = randomBytes(32).toString("hex");
   const passwordHash = await hash(randomToken, 12);
 
-  const [driver] = await db
+  const [user] = await db
     .insert(users)
     .values({
       email: parsed.data.email,
       passwordHash,
       name: parsed.data.name,
-      pesel: parsed.data.pesel ?? null,
-      role: "driver",
+      role: parsed.data.role,
       mustSetPassword: true,
     })
-    .returning();
+    .returning({ id: users.id });
 
-  await logAudit({
-    userId: Number(session.user.id),
-    action: "driver.create",
-    entityType: "driver",
-    entityId: driver.id,
-    details: { email: parsed.data.email, name: parsed.data.name },
-  });
+  if (user) {
+    await logAudit({
+      userId: Number(session.user.id),
+      action: "user.create",
+      entityType: "user",
+      entityId: user.id,
+      details: { email: parsed.data.email, name: parsed.data.name, role: parsed.data.role },
+    });
+  }
 
-  revalidatePath("/admin/kierowcy");
-  return { success: true, driverId: driver.id };
+  revalidatePath("/admin/uzytkownicy");
+  return { success: true, userId: user!.id };
 }
 
-export async function updateDriver(id: number, formData: FormData) {
+export async function updateUser(id: number, formData: FormData) {
   const session = await requireAdmin();
 
   const raw = Object.fromEntries(formData);
-  const parsed = driverSchema.safeParse({
-    ...raw,
-    pesel: raw.pesel || null,
-  });
+  const parsed = userSchema.safeParse(raw);
 
   if (!parsed.success) {
     return { error: parsed.error.flatten().fieldErrors };
   }
-
-  const [existing] = await db
-    .select({ email: users.email, name: users.name })
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1);
 
   await db
     .update(users)
     .set({
       email: parsed.data.email,
       name: parsed.data.name,
-      pesel: parsed.data.pesel ?? null,
+      role: parsed.data.role,
       updatedAt: new Date(),
     })
     .where(eq(users.id, id));
 
   await logAudit({
     userId: Number(session.user.id),
-    action: "driver.update",
-    entityType: "driver",
+    action: "user.update",
+    entityType: "user",
     entityId: id,
-    details: {
-      previous: existing ?? undefined,
-      current: { email: parsed.data.email, name: parsed.data.name },
-    },
+    details: { email: parsed.data.email, name: parsed.data.name, role: parsed.data.role },
   });
 
+  revalidatePath("/admin/uzytkownicy");
+  revalidatePath(`/admin/uzytkownicy/${id}`);
   revalidatePath("/admin/kierowcy");
-  revalidatePath(`/admin/kierowcy/${id}`);
   return { success: true };
 }
 
-export async function resetDriverPassword(driverId: number) {
+export async function resetUserPassword(userId: number) {
   const session = await requireAdmin();
 
-  const [driver] = await db
-    .select({ id: users.id, role: users.role })
+  const [target] = await db
+    .select({ id: users.id })
     .from(users)
-    .where(eq(users.id, driverId))
+    .where(eq(users.id, userId))
     .limit(1);
 
-  if (!driver || driver.role !== "driver") {
-    return { error: "Nie znaleziono kierowcy" };
+  if (!target) {
+    return { error: "Nie znaleziono użytkownika" };
   }
 
   const randomToken = randomBytes(32).toString("hex");
@@ -118,36 +105,44 @@ export async function resetDriverPassword(driverId: number) {
       mustSetPassword: true,
       updatedAt: new Date(),
     })
-    .where(eq(users.id, driverId));
+    .where(eq(users.id, userId));
 
   await logAudit({
     userId: Number(session.user.id),
-    action: "driver.password_reset",
-    entityType: "driver",
-    entityId: driverId,
+    action: "user.password_reset",
+    entityType: "user",
+    entityId: userId,
     details: {},
   });
 
-  revalidatePath("/admin/kierowcy");
-  revalidatePath(`/admin/kierowcy/${driverId}`);
+  revalidatePath("/admin/uzytkownicy");
+  revalidatePath(`/admin/uzytkownicy/${userId}`);
   return { success: true };
 }
 
-export async function deactivateDriver(id: number) {
+export async function setUserActive(id: number, isActive: boolean) {
   const session = await requireAdmin();
+
+  const currentUserId = Number(session.user.id);
+  if (id === currentUserId && !isActive) {
+    return { error: "Nie możesz dezaktywować własnego konta" };
+  }
 
   await db
     .update(users)
-    .set({ isActive: false, updatedAt: new Date() })
+    .set({ isActive, updatedAt: new Date() })
     .where(eq(users.id, id));
 
   await logAudit({
-    userId: Number(session.user.id),
-    action: "driver.deactivate",
-    entityType: "driver",
+    userId: currentUserId,
+    action: isActive ? "user.activate" : "user.deactivate",
+    entityType: "user",
     entityId: id,
+    details: { isActive },
   });
 
+  revalidatePath("/admin/uzytkownicy");
+  revalidatePath(`/admin/uzytkownicy/${id}`);
   revalidatePath("/admin/kierowcy");
   return { success: true };
 }

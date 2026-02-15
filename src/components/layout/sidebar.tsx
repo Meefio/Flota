@@ -9,8 +9,10 @@ import {
   Truck,
   Wrench,
   Users,
+  UserCog,
   Calendar,
   FileText,
+  User,
 } from "lucide-react";
 import { ADMIN_NAV_ITEMS, DRIVER_NAV_ITEMS } from "@/lib/constants";
 
@@ -19,8 +21,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Truck,
   Wrench,
   Users,
+  UserCog,
   Calendar,
   FileText,
+  User,
 };
 
 export function Sidebar({ role }: { role: "admin" | "driver" }) {

@@ -74,3 +74,12 @@ export const vehicleServiceSchema = z.object({
 });
 
 export type VehicleServiceFormValues = z.infer<typeof vehicleServiceSchema>;
+
+export const userSchema = z.object({
+  email: z.string().email("Nieprawidłowy email"),
+  name: z.string().min(1, "Imię i nazwisko jest wymagane").max(255),
+  role: z.enum(["admin", "driver"], { message: "Wybierz rolę" }),
+  password: z.string().min(6, "Hasło musi mieć min. 6 znaków").optional(),
+});
+
+export type UserFormValues = z.infer<typeof userSchema>;

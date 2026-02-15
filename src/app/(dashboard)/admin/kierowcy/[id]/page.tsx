@@ -5,6 +5,7 @@ import { getDriverWithDocuments } from "@/lib/queries/drivers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DriverDocuments } from "@/components/drivers/driver-documents";
+import { ResetPasswordButton } from "@/components/drivers/reset-password-button";
 import { Pencil } from "lucide-react";
 
 export default async function DriverDetailPage({
@@ -28,12 +29,15 @@ export default async function DriverDetailPage({
             <p className="text-muted-foreground text-sm">PESEL: {driver.pesel}</p>
           )}
         </div>
-        <Button asChild variant="outline">
-          <Link href={`/admin/kierowcy/${driver.id}`}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Edytuj
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href={`/admin/kierowcy/${driver.id}/edycja`}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Edytuj
+            </Link>
+          </Button>
+          <ResetPasswordButton driverId={driver.id} />
+        </div>
       </div>
 
       <Card>

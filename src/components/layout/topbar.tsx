@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,6 +69,15 @@ export function Topbar({
             <DropdownMenuItem disabled>
               <User className="mr-2 h-4 w-4" />
               {role === "admin" ? "Administrator" : "Kierowca"}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href={role === "admin" ? "/admin/profil" : "/kierowca/profil"}
+                className="flex items-center"
+              >
+                <User className="mr-2 h-4 w-4" />
+                Moje konto
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })}>
               <LogOut className="mr-2 h-4 w-4" />

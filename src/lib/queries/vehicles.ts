@@ -34,7 +34,7 @@ export async function getVehicleWithDetails(id: number) {
     .from(vehicleDeadlines)
     .where(eq(vehicleDeadlines.vehicleId, id));
 
-  const currentAssignment = await db
+  const currentAssignments = await db
     .select({
       id: vehicleAssignments.id,
       userId: vehicleAssignments.userId,
@@ -49,13 +49,12 @@ export async function getVehicleWithDetails(id: number) {
         eq(vehicleAssignments.vehicleId, id),
         isNull(vehicleAssignments.assignedTo)
       )
-    )
-    .limit(1);
+    );
 
   return {
     ...vehicle,
     deadlines,
-    currentAssignment: currentAssignment[0] ?? null,
+    currentAssignments,
   };
 }
 

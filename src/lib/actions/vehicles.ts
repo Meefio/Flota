@@ -61,6 +61,20 @@ export async function updateVehicle(id: number, formData: FormData) {
     return { error: parsed.error.flatten().fieldErrors };
   }
 
+  const [existing] = await db
+    .select({
+      registrationNumber: vehicles.registrationNumber,
+      vin: vehicles.vin,
+      brand: vehicles.brand,
+      model: vehicles.model,
+      type: vehicles.type,
+      year: vehicles.year,
+      notes: vehicles.notes,
+    })
+    .from(vehicles)
+    .where(eq(vehicles.id, id))
+    .limit(1);
+
   await db
     .update(vehicles)
     .set({
@@ -80,7 +94,10 @@ export async function updateVehicle(id: number, formData: FormData) {
     action: "vehicle.update",
     entityType: "vehicle",
     entityId: id,
-    details: parsed.data,
+    details: {
+      previous: existing ?? undefined,
+      current: parsed.data,
+    },
   });
 
   revalidatePath("/admin/pojazdy");

@@ -43,13 +43,16 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Pojazdy", href: "/admin/pojazdy", icon: "Truck" },
   { label: "Serwisy", href: "/admin/serwisy", icon: "Wrench" },
   { label: "Kierowcy", href: "/admin/kierowcy", icon: "Users" },
+  { label: "Użytkownicy", href: "/admin/uzytkownicy", icon: "UserCog" },
   { label: "Kalendarz", href: "/admin/kalendarz", icon: "Calendar" },
   { label: "Logi", href: "/admin/logi", icon: "FileText" },
+  { label: "Profil", href: "/admin/profil", icon: "User" },
 ] as const;
 
 export const DRIVER_NAV_ITEMS = [
   { label: "Pojazdy", href: "/kierowca/pojazdy", icon: "Truck" },
   { label: "Dokumenty", href: "/kierowca/dokumenty", icon: "FileText" },
+  { label: "Profil", href: "/kierowca/profil", icon: "User" },
 ] as const;
 
 export const AUTHORIZATION_DOCUMENTS: DriverDocumentType[] = [
@@ -67,7 +70,32 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "driver.create": "Dodanie kierowcy",
   "driver.update": "Edycja kierowcy",
   "driver.deactivate": "Dezaktywacja kierowcy",
+  "driver.password_reset": "Reset hasła kierowcy",
   "deadline.operation": "Operacja terminu",
   "assignment.create": "Przypisanie kierowcy",
   "assignment.end": "Odłączenie kierowcy",
+  "service.create": "Dodanie serwisu",
+  "service.update": "Edycja serwisu",
+  "service.delete": "Usunięcie serwisu",
+  "driver_document.update": "Aktualizacja dokumentu kierowcy",
+  "note.create": "Dodanie notatki",
+  "note.toggle": "Zmiana statusu notatki",
+  "note.delete": "Usunięcie notatki",
+  "user.create": "Dodanie użytkownika",
+  "user.update": "Edycja użytkownika",
+  "user.deactivate": "Dezaktywacja użytkownika",
+  "user.activate": "Aktywacja użytkownika",
+  "user.password_reset": "Reset hasła użytkownika",
+};
+
+/** Etykiety typów encji w logach audytu (kolumna Typ). */
+export const AUDIT_ENTITY_TYPE_LABELS: Record<string, string> = {
+  vehicle: "Pojazd",
+  vehicle_service: "Serwis pojazdu",
+  driver: "Kierowca",
+  user: "Użytkownik",
+  vehicle_assignment: "Przypisanie",
+  assignment: "Przypisanie",
+  driver_document: "Dokument kierowcy",
+  vehicle_note: "Notatka",
 };

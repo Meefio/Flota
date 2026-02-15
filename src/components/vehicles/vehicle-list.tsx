@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
-import { Eye } from "lucide-react";
 
 interface Vehicle {
   id: number;
@@ -60,7 +57,6 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
             <TableHead>Typ</TableHead>
             <TableHead>Marka / Model</TableHead>
             <TableHead className="hidden sm:table-cell">Rok</TableHead>
-            <TableHead className="text-right">Akcje</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,18 +85,6 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
               </TableCell>
               <TableCell className="hidden sm:table-cell">
                 {vehicle.year ?? "—"}
-              </TableCell>
-              <TableCell
-                className="text-right"
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-              >
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/admin/pojazdy/${vehicle.id}`}>
-                    <Eye className="h-4 w-4 mr-1" />
-                    Szczegóły
-                  </Link>
-                </Button>
               </TableCell>
             </TableRow>
           ))}

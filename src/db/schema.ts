@@ -22,6 +22,7 @@ export const users = pgTable("users", {
   role: varchar("role", { length: 20 }).notNull().$type<"admin" | "driver">(),
   pesel: varchar("pesel", { length: 11 }),
   isActive: boolean("is_active").notNull().default(true),
+  mustSetPassword: boolean("must_set_password").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

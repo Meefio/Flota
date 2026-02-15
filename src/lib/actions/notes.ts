@@ -5,6 +5,7 @@ import { vehicleNotes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireDriverOwnership } from "@/lib/auth-utils";
+import { logAudit } from "@/lib/audit";
 import { z } from "zod";
 
 const noteSchema = z.object({
@@ -22,11 +23,28 @@ export async function createNote(formData: FormData) {
 
   const session = await requireDriverOwnership(parsed.data.vehicleId);
 
-  await db.insert(vehicleNotes).values({
-    vehicleId: parsed.data.vehicleId,
-    content: parsed.data.content,
-    createdById: Number(session.user.id),
-  });
+  const [note] = await db
+    .insert(vehicleNotes)
+    .values({
+      vehicleId: parsed.data.vehicleId,
+      content: parsed.data.content,
+      createdById: Number(session.user.id),
+    })
+    .returning();
+
+  if (note) {
+    const contentPreview =
+      parsed.data.content.length > 80
+        ? `${parsed.data.content.slice(0, 80)}…`
+        : parsed.data.content;
+    await logAudit({
+      userId: Number(session.user.id),
+      action: "note.create",
+      entityType: "vehicle_note",
+      entityId: note.id,
+      details: { vehicleId: parsed.data.vehicleId, contentPreview },
+    });
+  }
 
   revalidatePath(`/kierowca/pojazdy/${parsed.data.vehicleId}`);
   revalidatePath(`/admin/pojazdy/${parsed.data.vehicleId}`);
@@ -42,12 +60,20 @@ export async function toggleNote(noteId: number, isDone: boolean) {
 
   if (!note) return { error: "Nie znaleziono notatki" };
 
-  await requireDriverOwnership(note.vehicleId);
+  const session = await requireDriverOwnership(note.vehicleId);
 
   await db
     .update(vehicleNotes)
     .set({ isDone, updatedAt: new Date() })
     .where(eq(vehicleNotes.id, noteId));
+
+  await logAudit({
+    userId: Number(session.user.id),
+    action: "note.toggle",
+    entityType: "vehicle_note",
+    entityId: noteId,
+    details: { vehicleId: note.vehicleId, isDone },
+  });
 
   revalidatePath(`/kierowca/pojazdy/${note.vehicleId}`);
   revalidatePath(`/admin/pojazdy/${note.vehicleId}`);
@@ -63,9 +89,17 @@ export async function deleteNote(noteId: number) {
 
   if (!note) return { error: "Nie znaleziono notatki" };
 
-  await requireDriverOwnership(note.vehicleId);
+  const session = await requireDriverOwnership(note.vehicleId);
 
   await db.delete(vehicleNotes).where(eq(vehicleNotes.id, noteId));
+
+  await logAudit({
+    userId: Number(session.user.id),
+    action: "note.delete",
+    entityType: "vehicle_note",
+    entityId: noteId,
+    details: { vehicleId: note.vehicleId },
+  });
 
   revalidatePath(`/kierowca/pojazdy/${note.vehicleId}`);
   revalidatePath(`/admin/pojazdy/${note.vehicleId}`);

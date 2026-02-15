@@ -5,6 +5,7 @@ import { driverDocuments } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth-utils";
+import { logAudit } from "@/lib/audit";
 import type { DriverDocumentType } from "@/db/schema";
 
 export async function updateDriverDocument(
@@ -12,7 +13,7 @@ export async function updateDriverDocument(
   type: DriverDocumentType,
   data: { expiresAt?: string | null; isActive?: boolean }
 ) {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   const existing = await db
     .select()
@@ -41,6 +42,14 @@ export async function updateDriverDocument(
       isActive: data.isActive ?? false,
     });
   }
+
+  await logAudit({
+    userId: Number(session.user.id),
+    action: "driver_document.update",
+    entityType: "driver_document",
+    entityId: userId,
+    details: { type, expiresAt: data.expiresAt ?? null, isActive: data.isActive },
+  });
 
   revalidatePath(`/admin/kierowcy/${userId}`);
   revalidatePath(`/kierowca/dokumenty`);

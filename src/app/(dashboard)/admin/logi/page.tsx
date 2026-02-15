@@ -13,7 +13,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { AUDIT_ACTION_LABELS } from "@/lib/constants";
+import { AUDIT_ACTION_LABELS, AUDIT_ENTITY_TYPE_LABELS } from "@/lib/constants";
+import { formatAuditDetails } from "@/lib/audit-details-formatter";
 
 export default async function AuditLogsPage() {
   await requireAdmin();
@@ -59,12 +60,19 @@ export default async function AuditLogsPage() {
                     {AUDIT_ACTION_LABELS[entry.log.action] ?? entry.log.action}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{entry.log.entityType}</Badge>
+                    <Badge variant="outline">
+                      {AUDIT_ENTITY_TYPE_LABELS[entry.log.entityType] ??
+                        entry.log.entityType}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground max-w-xs truncate">
-                    {entry.log.details
-                      ? JSON.stringify(entry.log.details)
-                      : "—"}
+                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground max-w-md">
+                    <span className="block wrap-break-word">
+                      {formatAuditDetails(
+                        entry.log.action,
+                        entry.log.entityType,
+                        entry.log.details as Record<string, unknown> | null
+                      )}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

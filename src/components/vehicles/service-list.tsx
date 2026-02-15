@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { SERVICE_TYPE_LABELS } from "@/lib/constants";
 import { updateService, deleteService } from "@/lib/actions/services";
 import { toast } from "sonner";
@@ -72,42 +73,79 @@ function ServiceItem({ service }: { service: Service }) {
 
   return (
     <>
-      <div className={`border rounded-lg p-3 space-y-1 ${isDeleting ? "opacity-50" : ""}`}>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <Badge variant="outline">
-              {SERVICE_TYPE_LABELS[service.type as ServiceType] ?? service.type}
-            </Badge>
-            <span className="text-sm font-medium truncate">{service.description}</span>
+      <Card className={isDeleting ? "opacity-50" : undefined}>
+        <CardContent className="py-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 flex-1 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline">
+                  {SERVICE_TYPE_LABELS[service.type as ServiceType] ?? service.type}
+                </Badge>
+                <span className="text-base font-medium leading-tight">
+                  {service.description}
+                </span>
+              </div>
+              <dl className="grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-3">
+                <div>
+                  <dt className="text-muted-foreground font-normal">Data</dt>
+                  <dd className="font-medium">
+                    {new Date(service.performedAt).toLocaleDateString("pl-PL")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground font-normal">Przebieg</dt>
+                  <dd className="font-medium">
+                    {service.mileage != null
+                      ? `${service.mileage.toLocaleString("pl-PL")} km`
+                      : "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted-foreground font-normal">Warsztat</dt>
+                  <dd className="font-medium truncate" title={service.workshop ?? undefined}>
+                    {service.workshop ?? "—"}
+                  </dd>
+                </div>
+              </dl>
+              {service.notes && (
+                <div>
+                  <p className="text-muted-foreground text-sm font-normal">Notatki</p>
+                  <p className="text-sm mt-0.5">{service.notes}</p>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2 shrink-0 sm:flex-col sm:items-end">
+              {service.cost && (
+                <span className="text-base font-semibold tabular-nums">
+                  {Number(service.cost).toLocaleString("pl-PL", {
+                    style: "currency",
+                    currency: "PLN",
+                  })}
+                </span>
+              )}
+              <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setEditOpen(true)}
+                  aria-label="Edytuj serwis"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  aria-label="Usuń serwis"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {service.cost && (
-              <span className="text-sm font-semibold mr-2">
-                {Number(service.cost).toLocaleString("pl-PL", {
-                  style: "currency",
-                  currency: "PLN",
-                })}
-              </span>
-            )}
-            <Button variant="ghost" size="icon-xs" onClick={() => setEditOpen(true)}>
-              <Pencil className="h-3 w-3" />
-            </Button>
-            <Button variant="ghost" size="icon-xs" onClick={handleDelete} disabled={isDeleting}>
-              <Trash2 className="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span>Data: {new Date(service.performedAt).toLocaleDateString("pl-PL")}</span>
-          {service.mileage && (
-            <span>Przebieg: {service.mileage.toLocaleString("pl-PL")} km</span>
-          )}
-          {service.workshop && <span>Warsztat: {service.workshop}</span>}
-        </div>
-        {service.notes && (
-          <p className="text-xs text-muted-foreground mt-1">{service.notes}</p>
-        )}
-      </div>
+        </CardContent>
+      </Card>
 
       <EditServiceDialog
         service={service}

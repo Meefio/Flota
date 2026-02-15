@@ -6,7 +6,7 @@ import {
   vehicleAssignments,
   driverDocuments,
 } from "@/db/schema";
-import { eq, and, isNull, lte, count } from "drizzle-orm";
+import { eq, and, isNull, lte, count, inArray } from "drizzle-orm";
 import { addDays, format } from "date-fns";
 import { getDeadlineStatus } from "@/lib/deadline-utils";
 
@@ -60,6 +60,8 @@ export async function getDriverDashboard(userId: number) {
       brand: vehicles.brand,
       model: vehicles.model,
       type: vehicles.type,
+      assignedFrom: vehicleAssignments.assignedFrom,
+      notes: vehicleAssignments.notes,
     })
     .from(vehicleAssignments)
     .innerJoin(vehicles, eq(vehicleAssignments.vehicleId, vehicles.id))
@@ -72,14 +74,13 @@ export async function getDriverDashboard(userId: number) {
 
   // Get deadlines for assigned vehicles
   const vehicleIds = myVehicles.map((v) => v.vehicleId);
-  const deadlines =
+  const myDeadlines =
     vehicleIds.length > 0
-      ? await db.select().from(vehicleDeadlines)
+      ? await db
+          .select()
+          .from(vehicleDeadlines)
+          .where(inArray(vehicleDeadlines.vehicleId, vehicleIds))
       : [];
-
-  const myDeadlines = deadlines.filter((d) =>
-    vehicleIds.includes(d.vehicleId)
-  );
 
   const myDocuments = await db
     .select()

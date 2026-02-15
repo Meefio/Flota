@@ -20,16 +20,16 @@ export default async function DriverDetailPage({
   if (!driver) notFound();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{driver.name}</h1>
-          <p className="text-muted-foreground">{driver.email}</p>
+    <div className="min-w-0 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold truncate">{driver.name}</h1>
+          <p className="text-muted-foreground truncate">{driver.email}</p>
           {driver.pesel && (
             <p className="text-muted-foreground text-sm">PESEL: {driver.pesel}</p>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2">
           <Button asChild variant="outline">
             <Link href={`/admin/kierowcy/${driver.id}/edycja`}>
               <Pencil className="h-4 w-4 mr-2" />
@@ -40,9 +40,9 @@ export default async function DriverDetailPage({
         </div>
       </div>
 
-      <Card>
+      <Card className="min-w-0 overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-lg">Dokumenty i upoważnienia</CardTitle>
+          <CardTitle className="text-lg wrap-break-word">Dokumenty i upoważnienia</CardTitle>
         </CardHeader>
         <CardContent>
           <DriverDocuments userId={driver.id} documents={driver.documents} />

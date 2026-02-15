@@ -47,21 +47,25 @@ export function Topbar({
     .slice(0, 2);
 
   return (
-    <header className="h-14 border-b bg-card flex items-center justify-between px-4 sticky top-0 z-50">
-      <div className="flex items-center gap-2">
+    <header className="flex h-14 min-w-0 items-center justify-between gap-2 border-b bg-card px-4 sticky top-0 z-50">
+      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
         <MobileNav role={role} />
-        <Link href={role === "admin" ? "/admin" : "/kierowca"}>
+        <Link
+          href={role === "admin" ? "/admin" : "/kierowca"}
+          className="block min-w-0 flex-1 md:flex-initial"
+          aria-label="Strona główna"
+        >
           <Image
             src="/logo.png"
             alt="W.G. Invest Group Sp. z o.o."
             width={240}
             height={64}
-            className="h-14 w-auto object-contain md:hidden"
+            className="h-14 w-auto max-w-[160px] object-contain object-left md:max-w-[220px] md:hidden"
             unoptimized
           />
         </Link>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         {role === "admin" && (
           <NotificationBell
             urgentCount={urgentCount}

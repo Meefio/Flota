@@ -33,7 +33,7 @@ interface DriverDocumentsProps {
 
 export function DriverDocuments({ userId, documents }: DriverDocumentsProps) {
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div>
         <h3 className="font-medium mb-3">Dokumenty z terminem ważności</h3>
         <div className="space-y-3">
@@ -93,19 +93,19 @@ function ExpiryDocumentRow({
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 py-2 border-b last:border-0">
-      <Label className="min-w-[140px] text-sm">
+    <div className="flex flex-col gap-2 py-2 border-b last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+      <Label className="shrink-0 text-sm">
         {DRIVER_DOCUMENT_LABELS[type]}
       </Label>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 min-w-0">
         {expiresAt && <DeadlineBadge expiresAt={expiresAt} />}
         <Input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-40"
+          className="w-full min-w-0 sm:w-40"
         />
-        <Button size="sm" onClick={handleSave} disabled={saving}>
+        <Button size="sm" onClick={handleSave} disabled={saving} className="shrink-0">
           {saving ? "..." : "Zapisz"}
         </Button>
       </div>
@@ -134,12 +134,13 @@ function AuthorizationRow({
   }
 
   return (
-    <div className="flex items-center justify-between py-2 border-b last:border-0">
-      <Label className="text-sm">{DRIVER_DOCUMENT_LABELS[type]}</Label>
+    <div className="flex flex-col gap-2 py-2 border-b last:border-0 sm:flex-row sm:items-center sm:justify-between">
+      <Label className="min-w-0 text-sm">{DRIVER_DOCUMENT_LABELS[type]}</Label>
       <Switch
         checked={checked}
         onCheckedChange={handleToggle}
         disabled={saving}
+        className="shrink-0"
       />
     </div>
   );

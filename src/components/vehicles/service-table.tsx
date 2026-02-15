@@ -55,17 +55,17 @@ export function ServiceTable({ services }: { services: ServiceRow[] }) {
   };
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border text-xs sm:text-sm">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Typ</TableHead>
-            <TableHead>Opis</TableHead>
-            <TableHead>Pojazd</TableHead>
-            <TableHead>Data</TableHead>
-            <TableHead className="hidden md:table-cell">Przebieg</TableHead>
-            <TableHead className="hidden lg:table-cell">Warsztat</TableHead>
-            <TableHead className="text-right">Koszt</TableHead>
+            <TableHead className="h-8 px-1.5 sm:h-10 sm:px-2">Typ</TableHead>
+            <TableHead className="h-8 px-1.5 sm:h-10 sm:px-2">Opis</TableHead>
+            <TableHead className="h-8 px-1.5 sm:h-10 sm:px-2">Pojazd</TableHead>
+            <TableHead className="h-8 px-1.5 sm:h-10 sm:px-2">Data</TableHead>
+            <TableHead className="hidden md:table-cell h-8 px-1.5 md:h-10 md:px-2">Przebieg</TableHead>
+            <TableHead className="hidden lg:table-cell h-8 px-1.5 lg:h-10 lg:px-2">Warsztat</TableHead>
+            <TableHead className="h-8 px-1.5 text-right sm:h-10 sm:px-2">Koszt</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -79,33 +79,33 @@ export function ServiceTable({ services }: { services: ServiceRow[] }) {
               onKeyDown={(e) => handleRowKeyDown(e, service.vehicleId)}
               aria-label={`Serwis: ${service.description}, pojazd ${service.registrationNumber}`}
             >
-              <TableCell>
-                <Badge variant="outline">
+              <TableCell className="p-1.5 sm:p-2">
+                <Badge variant="outline" className="text-[10px] sm:text-xs">
                   {SERVICE_TYPE_LABELS[service.type as ServiceType] ?? service.type}
                 </Badge>
               </TableCell>
-              <TableCell className="font-medium max-w-[200px] truncate" title={service.description}>
+              <TableCell className="p-1.5 font-medium max-w-[120px] truncate sm:max-w-[200px] sm:p-2" title={service.description}>
                 {service.description}
               </TableCell>
-              <TableCell className="whitespace-nowrap">
+              <TableCell className="whitespace-nowrap p-1.5 sm:p-2">
                 {service.registrationNumber}
                 <span className="hidden sm:inline text-muted-foreground">
                   {" "}
                   — {service.vehicleBrand} {service.vehicleModel}
                 </span>
               </TableCell>
-              <TableCell className="whitespace-nowrap">
+              <TableCell className="whitespace-nowrap p-1.5 sm:p-2">
                 {new Date(service.performedAt).toLocaleDateString("pl-PL")}
               </TableCell>
-              <TableCell className="hidden md:table-cell text-muted-foreground">
+              <TableCell className="hidden p-1.5 text-muted-foreground md:table-cell md:p-2">
                 {service.mileage != null
                   ? `${service.mileage.toLocaleString("pl-PL")} km`
                   : "—"}
               </TableCell>
-              <TableCell className="hidden lg:table-cell text-muted-foreground max-w-[140px] truncate" title={service.workshop ?? undefined}>
+              <TableCell className="hidden max-w-[140px] truncate text-muted-foreground lg:table-cell lg:p-2" title={service.workshop ?? undefined}>
                 {service.workshop ?? "—"}
               </TableCell>
-              <TableCell className="text-right font-medium tabular-nums">
+              <TableCell className="p-1.5 text-right font-medium tabular-nums sm:p-2">
                 {service.cost
                   ? Number(service.cost).toLocaleString("pl-PL", {
                       style: "currency",

@@ -48,7 +48,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
   };
 
   return (
-    <div className="rounded-md border">
+    <div className="min-w-0 overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>

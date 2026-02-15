@@ -20,22 +20,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SERVICE_TYPE_LABELS } from "@/lib/constants";
-import { createService } from "@/lib/actions/services";
+import { createPlannedService } from "@/lib/actions/planned-services";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { CalendarPlus } from "lucide-react";
 import type { ServiceType } from "@/db/schema";
 
-interface ServiceFormGlobalProps {
+interface PlannedServiceFormGlobalProps {
   vehicles: { id: number; registrationNumber: string; brand: string; model: string }[];
 }
 
-export function ServiceFormGlobal({ vehicles }: ServiceFormGlobalProps) {
+export function PlannedServiceFormGlobal({ vehicles }: PlannedServiceFormGlobalProps) {
   async function handleAction(_prev: unknown, formData: FormData) {
-    const result = await createService(formData);
+    const result = await createPlannedService(formData);
     if ("error" in result) {
       return result;
     }
-    toast.success("Serwis został zapisany");
+    toast.success("Zaplanowano serwis");
     return { success: true };
   }
 
@@ -48,14 +48,14 @@ export function ServiceFormGlobal({ vehicles }: ServiceFormGlobalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="sm:h-9 sm:px-4 sm:py-2">
-          <Plus className="h-3.5 w-3 mr-1.5 sm:h-4 sm:mr-2" />
-          Nowy serwis
+        <Button size="sm" variant="outline" className="sm:h-9 sm:px-4 sm:py-2">
+          <CalendarPlus className="h-3.5 w-3 mr-1.5 sm:h-4 sm:mr-2" />
+          Zaplanuj serwis
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Dodaj wpis serwisowy</DialogTitle>
+          <DialogTitle>Zaplanuj serwis</DialogTitle>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
@@ -99,50 +99,24 @@ export function ServiceFormGlobal({ vehicles }: ServiceFormGlobalProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Opis</Label>
-            <Input name="description" placeholder="np. Wymiana oleju silnikowego + filtr" />
-            {errors?.description && (
-              <p className="text-sm text-destructive">{errors.description[0]}</p>
+            <Label>Planowana data</Label>
+            <Input name="plannedDate" type="date" required />
+            {errors?.plannedDate && (
+              <p className="text-sm text-destructive">{errors.plannedDate[0]}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Data wykonania</Label>
-              <Input name="performedAt" type="date" />
-              {errors?.performedAt && (
-                <p className="text-sm text-destructive">{errors.performedAt[0]}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label>Koszt (PLN)</Label>
-              <Input name="cost" type="number" step="0.01" min="0" placeholder="0.00" />
-              {errors?.cost && (
-                <p className="text-sm text-destructive">{errors.cost[0]}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Przebieg (km)</Label>
-              <Input name="mileage" type="number" min="0" placeholder="np. 150000" />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Warsztat</Label>
-              <Input name="workshop" placeholder="np. Auto-Serwis Sp. z o.o." />
-            </div>
-          </div>
-
           <div className="space-y-2">
-            <Label>Notatki</Label>
-            <Textarea name="notes" placeholder="Dodatkowe informacje..." rows={2} />
+            <Label>Notatki (opcjonalnie)</Label>
+            <Textarea
+              name="notes"
+              placeholder="np. Wymiana oleju co 15 000 km"
+              rows={2}
+            />
           </div>
 
           <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Zapisywanie..." : "Zapisz serwis"}
+            {isPending ? "Zapisywanie..." : "Zaplanuj serwis"}
           </Button>
         </form>
       </DialogContent>

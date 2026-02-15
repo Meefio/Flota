@@ -44,6 +44,8 @@ export async function assignVehicle(formData: FormData) {
 
   revalidatePath(`/admin/pojazdy/${parsed.data.vehicleId}`);
   revalidatePath("/admin/kierowcy");
+  revalidatePath("/kierowca/pojazdy");
+  revalidatePath("/kierowca/profil");
   return { success: true };
 }
 
@@ -70,6 +72,8 @@ export async function unassignVehicle(vehicleId: number) {
 
   revalidatePath(`/admin/pojazdy/${vehicleId}`);
   revalidatePath("/admin/kierowcy");
+  revalidatePath("/kierowca/pojazdy");
+  revalidatePath("/kierowca/profil");
   return { success: true };
 }
 
@@ -101,5 +105,7 @@ export async function unassignByAssignmentId(assignmentId: number) {
 
   revalidatePath(`/admin/pojazdy/${assignment.vehicleId}`);
   revalidatePath("/admin/kierowcy");
+  revalidatePath("/kierowca/pojazdy");
+  revalidatePath("/kierowca/profil");
   return { success: true };
 }

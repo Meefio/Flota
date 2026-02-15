@@ -3,6 +3,7 @@ import { requireDriverOwnership } from "@/lib/auth-utils";
 import { getVehicleWithDetails } from "@/lib/queries/vehicles";
 import { getDeadlineHistory } from "@/lib/queries/deadlines";
 import { getVehicleNotesForDriver } from "@/lib/queries/notes";
+import { getCurrentAssignment } from "@/lib/queries/assignments";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VEHICLE_TYPE_LABELS } from "@/lib/constants";
@@ -10,6 +11,8 @@ import { DeadlineList } from "@/components/vehicles/deadline-list";
 import { OperationForm } from "@/components/vehicles/operation-form";
 import { OperationHistory } from "@/components/vehicles/operation-history";
 import { VehicleNotes } from "@/components/vehicles/vehicle-notes";
+import { format } from "date-fns";
+import { pl } from "date-fns/locale";
 
 export default async function DriverVehiclePage({
   params,
@@ -20,13 +23,14 @@ export default async function DriverVehiclePage({
   const vehicleId = Number(id);
   const session = await requireDriverOwnership(vehicleId);
 
-  const vehicle = await getVehicleWithDetails(vehicleId);
-  if (!vehicle) notFound();
-
-  const [history, notes] = await Promise.all([
+  const [vehicle, history, notes, assignment] = await Promise.all([
+    getVehicleWithDetails(vehicleId),
     getDeadlineHistory(vehicleId),
     getVehicleNotesForDriver(vehicleId, Number(session.user.id)),
+    getCurrentAssignment(vehicleId),
   ]);
+
+  if (!vehicle) notFound();
 
   return (
     <div className="space-y-6">
@@ -42,6 +46,32 @@ export default async function DriverVehiclePage({
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
+        {assignment && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Przypisanie</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Przypisany od</span>
+                <span>
+                  {format(new Date(assignment.assignedFrom), "d MMM yyyy", {
+                    locale: pl,
+                  })}
+                </span>
+              </div>
+              {assignment.notes && (
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Notatka: </span>
+                  <span className="italic">{assignment.notes}</span>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground pt-1">
+                Zmiana przypisania należy do administratora.
+              </p>
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Informacje</CardTitle>

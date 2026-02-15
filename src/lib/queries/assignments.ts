@@ -67,6 +67,8 @@ export async function getDriverCurrentVehicles(userId: number) {
       brand: vehicles.brand,
       model: vehicles.model,
       type: vehicles.type,
+      assignedFrom: vehicleAssignments.assignedFrom,
+      notes: vehicleAssignments.notes,
     })
     .from(vehicleAssignments)
     .innerJoin(vehicles, eq(vehicleAssignments.vehicleId, vehicles.id))

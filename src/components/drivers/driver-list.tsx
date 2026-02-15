@@ -1,5 +1,6 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -8,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye } from "lucide-react";
 
 interface Driver {
   id: number;
@@ -17,6 +17,8 @@ interface Driver {
 }
 
 export function DriverList({ drivers }: { drivers: Driver[] }) {
+  const router = useRouter();
+
   if (drivers.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -25,29 +27,42 @@ export function DriverList({ drivers }: { drivers: Driver[] }) {
     );
   }
 
+  const handleRowClick = (driverId: number) => {
+    router.push(`/admin/kierowcy/${driverId}`);
+  };
+
+  const handleRowKeyDown = (
+    e: React.KeyboardEvent<HTMLTableRowElement>,
+    driverId: number
+  ) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleRowClick(driverId);
+    }
+  };
+
   return (
-    <div className="rounded-md border">
+    <div className="min-w-0 overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Imię i nazwisko</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead className="text-right">Akcje</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {drivers.map((driver) => (
-            <TableRow key={driver.id}>
+            <TableRow
+              key={driver.id}
+              role="button"
+              tabIndex={0}
+              className="cursor-pointer focus:outline-none focus-visible:bg-muted/50"
+              onClick={() => handleRowClick(driver.id)}
+              onKeyDown={(e) => handleRowKeyDown(e, driver.id)}
+              aria-label={`Szczegóły kierowcy ${driver.name}`}
+            >
               <TableCell className="font-medium">{driver.name}</TableCell>
               <TableCell>{driver.email}</TableCell>
-              <TableCell className="text-right">
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/admin/kierowcy/${driver.id}`}>
-                    <Eye className="h-4 w-4 mr-1" />
-                    Szczegóły
-                  </Link>
-                </Button>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>

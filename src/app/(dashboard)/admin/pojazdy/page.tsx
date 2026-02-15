@@ -17,8 +17,8 @@ export default async function VehiclesPage() {
   ]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="min-w-0 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Pojazdy</h1>
         <Button asChild>
           <Link href="/admin/pojazdy/nowy">
@@ -28,13 +28,15 @@ export default async function VehiclesPage() {
         </Button>
       </div>
 
-      <Tabs defaultValue="trucks">
-        <TabsList>
-          <TabsTrigger value="trucks">Ciągniki ({trucks.length})</TabsTrigger>
-          <TabsTrigger value="trailers">Naczepy ({trailers.length})</TabsTrigger>
-          <TabsTrigger value="buses">Busy ({buses.length})</TabsTrigger>
-          <TabsTrigger value="others">Pozostałe ({others.length})</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="trucks" className="min-w-0">
+        <div className="overflow-x-auto [-webkit-overflow-scrolling:touch] pb-1">
+          <TabsList className="w-max min-w-0">
+            <TabsTrigger value="trucks">Ciągniki ({trucks.length})</TabsTrigger>
+            <TabsTrigger value="trailers">Naczepy ({trailers.length})</TabsTrigger>
+            <TabsTrigger value="buses">Busy ({buses.length})</TabsTrigger>
+            <TabsTrigger value="others">Pozostałe ({others.length})</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="trucks">
           <VehicleList vehicles={trucks} />
         </TabsContent>

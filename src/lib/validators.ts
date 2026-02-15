@@ -75,6 +75,17 @@ export const vehicleServiceSchema = z.object({
 
 export type VehicleServiceFormValues = z.infer<typeof vehicleServiceSchema>;
 
+export const plannedServiceSchema = z.object({
+  vehicleId: z.coerce.number().positive(),
+  type: z.enum(["wymiana_oleju", "naprawa", "opony", "hamulce", "elektryka", "inne"], {
+    message: "Wybierz typ serwisu",
+  }),
+  plannedDate: z.string().min(1, "Data planowanego serwisu jest wymagana"),
+  notes: z.string().max(1000).nullable().optional(),
+});
+
+export type PlannedServiceFormValues = z.infer<typeof plannedServiceSchema>;
+
 export const userSchema = z.object({
   email: z.string().email("Nieprawidłowy email"),
   name: z.string().min(1, "Imię i nazwisko jest wymagane").max(255),

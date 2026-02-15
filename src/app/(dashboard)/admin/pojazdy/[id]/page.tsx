@@ -5,6 +5,7 @@ import { getVehicleWithDetails } from "@/lib/queries/vehicles";
 import { getDeadlineHistory } from "@/lib/queries/deadlines";
 import { getDrivers } from "@/lib/queries/drivers";
 import { getVehicleServices } from "@/lib/queries/services";
+import { getPlannedServicesByVehicle } from "@/lib/queries/planned-services";
 import { getVehicleNotes } from "@/lib/queries/notes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import { OperationHistory } from "@/components/vehicles/operation-history";
 import { AssignmentManager } from "@/components/vehicles/assignment-manager";
 import { ServiceForm } from "@/components/vehicles/service-form";
 import { ServiceList } from "@/components/vehicles/service-list";
+import { PlannedServiceList } from "@/components/vehicles/planned-service-list";
 import { VehicleNotes } from "@/components/vehicles/vehicle-notes";
 import { Pencil } from "lucide-react";
 
@@ -29,13 +31,15 @@ export default async function VehicleDetailPage({
   const { id } = await params;
   const vehicleId = Number(id);
 
-  const [vehicle, history, drivers, services, notes] = await Promise.all([
-    getVehicleWithDetails(vehicleId),
-    getDeadlineHistory(vehicleId),
-    getDrivers(),
-    getVehicleServices(vehicleId),
-    getVehicleNotes(vehicleId),
-  ]);
+  const [vehicle, history, drivers, services, plannedServices, notes] =
+    await Promise.all([
+      getVehicleWithDetails(vehicleId),
+      getDeadlineHistory(vehicleId),
+      getDrivers(),
+      getVehicleServices(vehicleId),
+      getPlannedServicesByVehicle(vehicleId),
+      getVehicleNotes(vehicleId),
+    ]);
 
   if (!vehicle) notFound();
 
@@ -137,6 +141,18 @@ export default async function VehicleDetailPage({
           </CardHeader>
           <CardContent>
             <ServiceList services={services} />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Zaplanowane serwisy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PlannedServiceList
+              vehicleId={vehicleId}
+              plannedServices={plannedServices}
+            />
           </CardContent>
         </Card>
 

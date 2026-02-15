@@ -77,6 +77,9 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
   "service.create": "Dodanie serwisu",
   "service.update": "Edycja serwisu",
   "service.delete": "Usunięcie serwisu",
+  "planned_service.create": "Zaplanowanie serwisu",
+  "planned_service.update": "Edycja zaplanowanego serwisu",
+  "planned_service.delete": "Usunięcie zaplanowanego serwisu",
   "driver_document.update": "Aktualizacja dokumentu kierowcy",
   "note.create": "Dodanie notatki",
   "note.toggle": "Zmiana statusu notatki",
@@ -92,6 +95,7 @@ export const AUDIT_ACTION_LABELS: Record<string, string> = {
 export const AUDIT_ENTITY_TYPE_LABELS: Record<string, string> = {
   vehicle: "Pojazd",
   vehicle_service: "Serwis pojazdu",
+  planned_vehicle_service: "Zaplanowany serwis",
   driver: "Kierowca",
   user: "Użytkownik",
   vehicle_assignment: "Przypisanie",

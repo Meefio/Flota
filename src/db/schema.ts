@@ -55,6 +55,7 @@ export const vehiclesRelations = relations(vehicles, ({ many }) => ({
   deadlineOperations: many(deadlineOperations),
   assignments: many(vehicleAssignments),
   services: many(vehicleServices),
+  plannedServices: many(plannedVehicleServices),
   notes: many(vehicleNotes),
 }));
 
@@ -234,6 +235,35 @@ export const vehicleServicesRelations = relations(vehicleServices, ({ one }) => 
     references: [users.id],
   }),
 }));
+
+// ==================== PLANNED VEHICLE SERVICES ====================
+export const plannedVehicleServices = pgTable("planned_vehicle_services", {
+  id: serial("id").primaryKey(),
+  vehicleId: integer("vehicle_id")
+    .notNull()
+    .references(() => vehicles.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 30 }).notNull().$type<ServiceType>(),
+  plannedDate: date("planned_date").notNull(),
+  notes: text("notes"),
+  createdById: integer("created_by_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const plannedVehicleServicesRelations = relations(
+  plannedVehicleServices,
+  ({ one }) => ({
+    vehicle: one(vehicles, {
+      fields: [plannedVehicleServices.vehicleId],
+      references: [vehicles.id],
+    }),
+    createdBy: one(users, {
+      fields: [plannedVehicleServices.createdById],
+      references: [users.id],
+    }),
+  })
+);
 
 // ==================== VEHICLE NOTES (driver checklist) ====================
 export const vehicleNotes = pgTable("vehicle_notes", {

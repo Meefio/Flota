@@ -13,8 +13,10 @@ interface CalendarEvent {
   borderColor: string;
   extendedProps: {
     vehicleId: number;
-    deadlineType: string;
-    status: string;
+    kind?: "deadline" | "planned_service";
+    deadlineType?: string;
+    status?: string;
+    serviceType?: string;
   };
 }
 
@@ -42,6 +44,7 @@ export function DeadlineCalendar({ events }: { events: CalendarEvent[] }) {
           const vehicleId = info.event.extendedProps.vehicleId;
           router.push(`/admin/pojazdy/${vehicleId}`);
         }}
+        eventClassNames={["cursor-pointer"]}
         height="auto"
         dayMaxEvents={3}
         eventDisplay="block"

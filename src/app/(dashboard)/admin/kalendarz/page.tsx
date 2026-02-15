@@ -1,5 +1,8 @@
 import { requireAdmin } from "@/lib/auth-utils";
-import { getAllDeadlinesForCalendar } from "@/lib/queries/calendar";
+import {
+  getAllDeadlinesForCalendar,
+  PLANNED_SERVICE_COLOR,
+} from "@/lib/queries/calendar";
 import { DeadlineCalendar } from "@/components/calendar/deadline-calendar";
 
 export default async function CalendarPage() {
@@ -25,6 +28,13 @@ export default async function CalendarPage() {
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-900" />
           <span>Przeterminowane</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: PLANNED_SERVICE_COLOR }}
+          />
+          <span>Zaplanowany serwis</span>
         </div>
       </div>
       <DeadlineCalendar events={events} />

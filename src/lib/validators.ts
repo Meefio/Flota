@@ -2,7 +2,16 @@ import { z } from "zod";
 
 export const vehicleSchema = z.object({
   type: z.enum(["truck", "trailer", "bus", "other"], { message: "Wybierz typ pojazdu" }),
-  vin: z.string().max(17).nullable().optional(),
+  vin: z
+    .string()
+    .max(17)
+    .nullable()
+    .optional()
+    .transform((v) => {
+      if (v === undefined || v === null) return null;
+      const s = String(v).trim();
+      return s === "" ? null : s.toUpperCase();
+    }),
   registrationNumber: z
     .string()
     .min(1, "Numer rejestracyjny jest wymagany")
@@ -17,7 +26,10 @@ export type VehicleFormValues = z.infer<typeof vehicleSchema>;
 
 export const deadlineOperationSchema = z.object({
   vehicleId: z.coerce.number().positive(),
-  deadlineType: z.enum(["przeglad", "ubezpieczenie", "tachograf", "winda_udt"]),
+  deadlineType: z
+    .string()
+    .min(1, "Wybierz typ operacji")
+    .refine((v) => ["przeglad", "ubezpieczenie", "tachograf", "winda_udt"].includes(v), "Nieprawidłowy typ operacji"),
   performedAt: z.string().min(1, "Data wykonania jest wymagana"),
   newExpiryDate: z.string().min(1, "Nowa data ważności jest wymagana"),
   notes: z.string().max(1000).optional(),

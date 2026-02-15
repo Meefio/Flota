@@ -64,7 +64,7 @@ export default async function DriverVehiclePage({
             {vehicle.vin && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">VIN</span>
-                <span className="font-mono text-sm">{vehicle.vin}</span>
+                <span className="font-mono text-sm uppercase">{vehicle.vin}</span>
               </div>
             )}
             {vehicle.year && (

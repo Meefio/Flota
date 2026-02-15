@@ -39,7 +39,7 @@ export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
 };
 
 export const ADMIN_NAV_ITEMS = [
-  { label: "Dashboard", href: "/admin", icon: "LayoutDashboard" },
+  { label: "Panel główny", href: "/admin", icon: "LayoutDashboard" },
   { label: "Pojazdy", href: "/admin/pojazdy", icon: "Truck" },
   { label: "Serwisy", href: "/admin/serwisy", icon: "Wrench" },
   { label: "Kierowcy", href: "/admin/kierowcy", icon: "Users" },
@@ -48,7 +48,7 @@ export const ADMIN_NAV_ITEMS = [
 ] as const;
 
 export const DRIVER_NAV_ITEMS = [
-  { label: "Dashboard", href: "/kierowca", icon: "LayoutDashboard" },
+  { label: "Panel główny", href: "/kierowca", icon: "LayoutDashboard" },
   { label: "Dokumenty", href: "/kierowca/dokumenty", icon: "FileText" },
 ] as const;
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,9 +32,14 @@ export function Topbar({ userName, role, urgentCount = 0 }: TopbarProps) {
     <header className="h-14 border-b bg-card flex items-center justify-between px-4">
       <div className="flex items-center gap-2">
         <MobileNav role={role} />
-        <span className="text-sm text-muted-foreground md:hidden font-bold">
-          FlotaApp
-        </span>
+        <Image
+          src="/logo.png"
+          alt="W.G. Invest Group Sp. z o.o."
+          width={240}
+          height={64}
+          className="h-14 w-auto object-contain md:hidden"
+          unoptimized
+        />
       </div>
       <div className="flex items-center gap-3">
         {role === "admin" && <NotificationBell count={urgentCount} />}

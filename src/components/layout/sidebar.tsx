@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -28,9 +29,21 @@ export function Sidebar({ role }: { role: "admin" | "driver" }) {
 
   return (
     <aside className="hidden md:flex w-64 flex-col border-r bg-card">
-      <div className="p-6 border-b">
-        <Link href={role === "admin" ? "/admin" : "/kierowca"}>
-          <h1 className="text-xl font-bold">FlotaApp</h1>
+      <div className="p-4 border-b flex justify-center items-center min-h-[6.5rem]">
+        <Link
+          href={role === "admin" ? "/admin" : "/kierowca"}
+          className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+          aria-label="Strona główna"
+        >
+          <Image
+            src="/logo.png"
+            alt="W.G. Invest Group Sp. z o.o."
+            width={320}
+            height={88}
+            className="h-20 w-auto max-w-full object-contain"
+            priority
+            unoptimized
+          />
         </Link>
       </div>
       <nav className="flex-1 p-4 space-y-1">

@@ -102,6 +102,8 @@ export function VehicleForm({ vehicle }: VehicleFormProps) {
                 defaultValue={vehicle?.vin ?? ""}
                 placeholder="np. WF0XXXGCDX1234567"
                 maxLength={17}
+                className="uppercase"
+                style={{ textTransform: "uppercase" }}
               />
               {errors?.vin && (
                 <p className="text-sm text-destructive">{errors.vin[0]}</p>

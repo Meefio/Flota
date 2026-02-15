@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,22 @@ export function MobileNav({ role }: { role: "admin" | "driver" }) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0">
-        <div className="p-6 border-b">
-          <h1 className="text-xl font-bold">FlotaApp</h1>
+        <div className="p-4 border-b flex justify-center items-center min-h-[6.5rem]">
+          <Link
+            href={role === "admin" ? "/admin" : "/kierowca"}
+            onClick={() => setOpen(false)}
+            className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+            aria-label="Strona główna"
+          >
+            <Image
+              src="/logo.png"
+              alt="W.G. Invest Group Sp. z o.o."
+              width={320}
+              height={88}
+              className="h-20 w-auto max-w-full object-contain"
+              unoptimized
+            />
+          </Link>
         </div>
         <nav className="p-4 space-y-1">
           {items.map((item) => {

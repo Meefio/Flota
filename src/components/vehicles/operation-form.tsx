@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { addYears, format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +33,8 @@ interface OperationFormProps {
 }
 
 export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }: OperationFormProps) {
+  const [selectedType, setSelectedType] = useState<string>(defaultType ?? "");
+
   async function handleAction(_prev: unknown, formData: FormData) {
     formData.set("vehicleId", String(vehicleId));
     const result = await recordOperation(formData);
@@ -47,6 +50,10 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
     ? (state.error as Record<string, string[]>)
     : undefined;
 
+  const today = format(new Date(), "yyyy-MM-dd");
+  const oneYearFromToday = format(addYears(new Date(), 1), "yyyy-MM-dd");
+  const canSubmit = selectedType.length > 0;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -60,10 +67,16 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
           <DialogTitle>Zgłoś wykonaną operację</DialogTitle>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
+          <input type="hidden" name="deadlineType" value={selectedType} aria-hidden />
           <div className="space-y-2">
-            <Label>Typ operacji</Label>
-            <Select name="deadlineType" defaultValue={defaultType ?? ""}>
-              <SelectTrigger>
+            <Label htmlFor="operation-deadline-type">Typ operacji</Label>
+            <Select
+              name="operation-deadline-type"
+              value={selectedType}
+              onValueChange={setSelectedType}
+              required
+            >
+              <SelectTrigger id="operation-deadline-type" aria-required="true" aria-invalid={!!errors?.deadlineType}>
                 <SelectValue placeholder="Wybierz typ" />
               </SelectTrigger>
               <SelectContent>
@@ -75,7 +88,7 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
               </SelectContent>
             </Select>
             {errors?.deadlineType && (
-              <p className="text-sm text-destructive">
+              <p className="text-sm text-destructive" role="alert">
                 {errors.deadlineType[0]}
               </p>
             )}
@@ -83,7 +96,7 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
 
           <div className="space-y-2">
             <Label>Data wykonania</Label>
-            <Input name="performedAt" type="date" />
+            <Input name="performedAt" type="date" defaultValue={today} />
             {errors?.performedAt && (
               <p className="text-sm text-destructive">
                 {errors.performedAt[0]}
@@ -93,7 +106,7 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
 
           <div className="space-y-2">
             <Label>Nowa data ważności</Label>
-            <Input name="newExpiryDate" type="date" />
+            <Input name="newExpiryDate" type="date" defaultValue={oneYearFromToday} />
             {errors?.newExpiryDate && (
               <p className="text-sm text-destructive">
                 {errors.newExpiryDate[0]}
@@ -106,7 +119,7 @@ export function OperationForm({ vehicleId, defaultType, vehicleType = "truck" }:
             <Textarea name="notes" placeholder="Dodatkowe informacje..." rows={3} />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full" disabled={isPending || !canSubmit}>
             {isPending ? "Zapisywanie..." : "Zapisz operację"}
           </Button>
         </form>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,18 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">FlotaApp</CardTitle>
+          <CardTitle className="sr-only">Logowanie do systemu floty</CardTitle>
+          <div className="flex justify-center items-center mb-4">
+            <Image
+              src="/logo.png"
+              alt="W.G. Invest Group Sp. z o.o."
+              width={380}
+              height={104}
+              className="h-24 w-auto max-w-full object-contain"
+              priority
+              unoptimized
+            />
+          </div>
           <p className="text-muted-foreground text-sm">
             Zarządzanie flotą pojazdów
           </p>

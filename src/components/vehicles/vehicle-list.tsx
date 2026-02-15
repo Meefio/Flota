@@ -52,7 +52,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
               <TableCell className="font-medium">
                 {vehicle.registrationNumber}
               </TableCell>
-              <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground">
+              <TableCell className="hidden md:table-cell font-mono text-xs uppercase text-muted-foreground">
                 {vehicle.vin ?? "—"}
               </TableCell>
               <TableCell>

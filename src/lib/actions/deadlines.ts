@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth-utils";
 import { deadlineOperationSchema } from "@/lib/validators";
+import { logAudit } from "@/lib/audit";
 import type { DeadlineType } from "@/db/schema";
 
 export async function recordOperation(formData: FormData) {
@@ -61,6 +62,14 @@ export async function recordOperation(formData: FormData) {
       expiresAt: newExpiryDate,
     });
   }
+
+  await logAudit({
+    userId: Number(session.user.id),
+    action: "deadline.operation",
+    entityType: "vehicle",
+    entityId: vehicleId,
+    details: { deadlineType, newExpiryDate },
+  });
 
   revalidatePath(`/admin/pojazdy/${vehicleId}`);
   revalidatePath(`/kierowca/pojazdy/${vehicleId}`);

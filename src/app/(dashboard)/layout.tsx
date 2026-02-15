@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { Toaster } from "@/components/ui/sonner";
 import { getExpiringDeadlines } from "@/lib/queries/deadlines";
+import { getRecentAuditLogsForAdmin } from "@/lib/queries/audit";
 
 export default async function DashboardLayout({
   children,
@@ -14,9 +15,15 @@ export default async function DashboardLayout({
   if (!session?.user) redirect("/login");
 
   let urgentCount = 0;
+  let recentAuditLogs: Awaited<ReturnType<typeof getRecentAuditLogsForAdmin>> =
+    [];
   if (session.user.role === "admin") {
-    const urgent = await getExpiringDeadlines(7);
+    const [urgent, audit] = await Promise.all([
+      getExpiringDeadlines(7),
+      getRecentAuditLogsForAdmin(15),
+    ]);
     urgentCount = urgent.length;
+    recentAuditLogs = audit;
   }
 
   return (
@@ -27,6 +34,7 @@ export default async function DashboardLayout({
           userName={session.user.name}
           role={session.user.role}
           urgentCount={urgentCount}
+          recentAuditLogs={recentAuditLogs}
         />
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>

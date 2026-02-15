@@ -13,18 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-
-const ACTION_LABELS: Record<string, string> = {
-  "vehicle.create": "Dodanie pojazdu",
-  "vehicle.update": "Edycja pojazdu",
-  "vehicle.delete": "Usunięcie pojazdu",
-  "driver.create": "Dodanie kierowcy",
-  "driver.update": "Edycja kierowcy",
-  "driver.deactivate": "Dezaktywacja kierowcy",
-  "deadline.operation": "Operacja terminu",
-  "assignment.create": "Przypisanie kierowcy",
-  "assignment.end": "Odłączenie kierowcy",
-};
+import { AUDIT_ACTION_LABELS } from "@/lib/constants";
 
 export default async function AuditLogsPage() {
   await requireAdmin();
@@ -67,7 +56,7 @@ export default async function AuditLogsPage() {
                   </TableCell>
                   <TableCell>{entry.userName}</TableCell>
                   <TableCell>
-                    {ACTION_LABELS[entry.log.action] ?? entry.log.action}
+                    {AUDIT_ACTION_LABELS[entry.log.action] ?? entry.log.action}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">{entry.log.entityType}</Badge>

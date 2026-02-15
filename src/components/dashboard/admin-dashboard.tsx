@@ -20,64 +20,66 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ stats }: AdminDashboardProps) {
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+    <div className="space-y-4 md:space-y-6">
+      <div className="grid gap-3 md:gap-4 md:grid-cols-4">
+        <Card className="py-3 gap-2 md:py-6 md:gap-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-1 px-4 md:px-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground md:text-sm">
               Ciągniki
             </CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
+            <Truck className="h-3.5 w-3.5 text-muted-foreground md:h-4 md:w-4" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.trucks}</div>
+          <CardContent className="px-4 pt-0 md:px-6">
+            <div className="text-xl font-bold md:text-2xl">{stats.trucks}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="py-3 gap-2 md:py-6 md:gap-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-1 px-4 md:px-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground md:text-sm">
               Naczepy
             </CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
+            <Truck className="h-3.5 w-3.5 text-muted-foreground md:h-4 md:w-4" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.trailers}</div>
+          <CardContent className="px-4 pt-0 md:px-6">
+            <div className="text-xl font-bold md:text-2xl">{stats.trailers}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="py-3 gap-2 md:py-6 md:gap-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-1 px-4 md:px-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground md:text-sm">
               Kierowcy
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-3.5 w-3.5 text-muted-foreground md:h-4 md:w-4" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.drivers}</div>
+          <CardContent className="px-4 pt-0 md:px-6">
+            <div className="text-xl font-bold md:text-2xl">{stats.drivers}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="py-3 gap-2 md:py-6 md:gap-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-1 px-4 md:px-6 md:pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground md:text-sm">
               Pilne terminy
             </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertTriangle className="h-3.5 w-3.5 text-destructive md:h-4 md:w-4" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">
+          <CardContent className="px-4 pt-0 md:px-6">
+            <div className="text-xl font-bold text-destructive md:text-2xl">
               {stats.urgentDeadlines.length}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pilne terminy (≤7 dni)</CardTitle>
+      <Card className="py-4 md:py-6">
+        <CardHeader className="px-4 md:px-6">
+          <CardTitle className="text-base md:text-lg">
+            Pilne terminy (≤7 dni)
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 md:px-6">
           <DeadlineAlerts deadlines={stats.urgentDeadlines} />
         </CardContent>
       </Card>

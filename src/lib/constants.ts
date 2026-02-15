@@ -48,7 +48,7 @@ export const ADMIN_NAV_ITEMS = [
 ] as const;
 
 export const DRIVER_NAV_ITEMS = [
-  { label: "Panel główny", href: "/kierowca", icon: "LayoutDashboard" },
+  { label: "Pojazdy", href: "/kierowca/pojazdy", icon: "Truck" },
   { label: "Dokumenty", href: "/kierowca/dokumenty", icon: "FileText" },
 ] as const;
 
@@ -58,3 +58,16 @@ export const AUTHORIZATION_DOCUMENTS: DriverDocumentType[] = [
 ];
 
 export const EXPIRY_DOCUMENTS: DriverDocumentType[] = ["a1", "imi", "ekuz"];
+
+/** Etykiety akcji w logach audytu (używane w powiadomieniach i stronie Logi). */
+export const AUDIT_ACTION_LABELS: Record<string, string> = {
+  "vehicle.create": "Dodanie pojazdu",
+  "vehicle.update": "Edycja pojazdu",
+  "vehicle.delete": "Usunięcie pojazdu",
+  "driver.create": "Dodanie kierowcy",
+  "driver.update": "Edycja kierowcy",
+  "driver.deactivate": "Dezaktywacja kierowcy",
+  "deadline.operation": "Operacja terminu",
+  "assignment.create": "Przypisanie kierowcy",
+  "assignment.end": "Odłączenie kierowcy",
+};

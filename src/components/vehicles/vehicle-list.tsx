@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -25,6 +26,8 @@ interface Vehicle {
 }
 
 export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
+  const router = useRouter();
+
   if (vehicles.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -32,6 +35,20 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
       </div>
     );
   }
+
+  const handleRowClick = (vehicleId: number) => {
+    router.push(`/admin/pojazdy/${vehicleId}`);
+  };
+
+  const handleRowKeyDown = (
+    e: React.KeyboardEvent<HTMLTableRowElement>,
+    vehicleId: number
+  ) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleRowClick(vehicleId);
+    }
+  };
 
   return (
     <div className="rounded-md border">
@@ -48,7 +65,14 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
         </TableHeader>
         <TableBody>
           {vehicles.map((vehicle) => (
-            <TableRow key={vehicle.id}>
+            <TableRow
+              key={vehicle.id}
+              role="button"
+              tabIndex={0}
+              className="cursor-pointer focus:outline-none focus-visible:bg-muted/50"
+              onClick={() => handleRowClick(vehicle.id)}
+              onKeyDown={(e) => handleRowKeyDown(e, vehicle.id)}
+            >
               <TableCell className="font-medium">
                 {vehicle.registrationNumber}
               </TableCell>
@@ -66,7 +90,11 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
               <TableCell className="hidden sm:table-cell">
                 {vehicle.year ?? "—"}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell
+                className="text-right"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`/admin/pojazdy/${vehicle.id}`}>
                     <Eye className="h-4 w-4 mr-1" />

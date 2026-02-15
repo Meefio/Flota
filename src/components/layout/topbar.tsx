@@ -13,14 +13,21 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 import { NotificationBell } from "./notification-bell";
+import type { RecentAuditEntry } from "@/lib/queries/audit";
 
 interface TopbarProps {
   userName: string;
   role: "admin" | "driver";
   urgentCount?: number;
+  recentAuditLogs?: RecentAuditEntry[];
 }
 
-export function Topbar({ userName, role, urgentCount = 0 }: TopbarProps) {
+export function Topbar({
+  userName,
+  role,
+  urgentCount = 0,
+  recentAuditLogs = [],
+}: TopbarProps) {
   const initials = userName
     .split(" ")
     .map((n) => n[0])
@@ -42,7 +49,12 @@ export function Topbar({ userName, role, urgentCount = 0 }: TopbarProps) {
         />
       </div>
       <div className="flex items-center gap-3">
-        {role === "admin" && <NotificationBell count={urgentCount} />}
+        {role === "admin" && (
+          <NotificationBell
+            urgentCount={urgentCount}
+            recentAuditLogs={recentAuditLogs}
+          />
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2">

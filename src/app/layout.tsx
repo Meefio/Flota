@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,6 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "FlotaApp - Zarządzanie flotą",
   description: "Aplikacja do zarządzania flotą pojazdów transportowych",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "FlotaApp",
+  },
+  icons: {
+    apple: "/icons/icon-192x192.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#171717",
 };
 
 export default function RootLayout({
@@ -28,6 +41,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
